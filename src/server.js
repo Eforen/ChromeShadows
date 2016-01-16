@@ -14,7 +14,7 @@
 var util = require('util'),
 	commander = require('commander'),
 	localize = require('localize'),
-	telnet = require('telnet'),
+	telnet = require('wez-telnet'),
 	fs = require('fs'),
 	colorize = require('colorize'),
 	clear = require('clear');
@@ -55,33 +55,36 @@ function init(rebootServer){
 	if(rebootServer){
 		util.log("Server: Starting...");
  
-		telnet.createServer(function (client) {
-		 
-		  // make unicode characters work properly 
-		  client.do.transmit_binary()
-		 
-		  // make the client emit 'window size' events 
-		  client.do.window_size()
-		 
-		  // listen for the window size events from the client 
-		  client.on('window size', function (e) {
-		    if (e.command === 'sb') {
-		      console.log('telnet window resized to %d x %d', e.width, e.height)
-		    }
-		  })
-		 
-		  // listen for the actual data from the client 
-		  client.on('data', function (b) {
-		  	//client.emit('command', telnet.COMMANDS.AO);
-		  	//client.emit('Abort Output');
-		  	//telnet.Command(COMMANDS.AO, client);
-		  	telnet.Command(245, client);
-		    client.write('You said: ' + b + '\n')
-		  })
-		 
-		  client.write('connected to Telnet server!\n')
-		 
-		}).listen(23)
+ 		var s = new telnet.Server(function (socket) {
+			// I am the connection callback
+			console.log("connected term=%s %dx%d",
+			socket.term, socket.windowSize[0], socket.windowSize[1]);
+
+			socket.write("Connected... Hello World...\n\r"+
+						 "Talk to me!\n\r"+
+						 ">. ");
+
+			socket.on('data', function (buf) {
+				console.log("data:", buf.toString('ascii'));
+				socket.telnetCommand(253, [248]);
+				socket.write("You said " + buf + '\n\r'+
+							 '>. ');
+			});
+			socket.on('resize', function (width, height) {
+				console.log("resized to %dx%d", width, height);
+			});
+			socket.on('interrupt', function () {
+				console.log("INTR!");
+				// disconnect on CTRL-C!
+				socket.end();
+			});
+			socket.on('close', function () {
+				console.log("END!");
+			});
+			
+			socket.emit('login', socket);
+		});
+		s.listen(23);
 	}
 }
 
@@ -190,7 +193,7 @@ process.stdin.resume();
 //Gracefull Shutdown
 process.on( 'SIGINT', function() {
   console.log( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
-  serverCommandsMethods.shutdown()
+  serverCommandMethods.shutdown()
   process.exit( );
 })
 

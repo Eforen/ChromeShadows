@@ -17,7 +17,7 @@
     "minimist": "^1.2.0",
     "node-uuid": "^1.4.7",
     "sty": "^0.6.1",
-    "telnet": "0.0.1",
+    "wez-telnet": "^0.1.1",
     "yaml": "^0.2.3"
   },
   "author": "Ariel Lothlorien",
