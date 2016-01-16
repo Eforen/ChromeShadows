@@ -1,0 +1,25 @@
+{
+  "name": "chromeshadows",
+  "version": "0.0.0",
+  "description": "",
+  "main": "ChromeShadows.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "babel-core": "^6.4.0",
+    "babel-register": "^6.4.3",
+    "clear": "0.0.1",
+    "colorize": "^0.1.0",
+    "commander": "^2.9.0",
+    "js-yaml": "^3.5.2",
+    "localize": "^0.4.7",
+    "minimist": "^1.2.0",
+    "node-uuid": "^1.4.7",
+    "sty": "^0.6.1",
+    "telnet": "0.0.1",
+    "yaml": "^0.2.3"
+  },
+  "author": "Ariel Lothlorien",
+  "license": "ISC"
+}
