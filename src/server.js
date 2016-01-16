@@ -48,7 +48,41 @@ npcsData = [];
 // Server Vars
 var saveinterval;
 
-function init(){
+function init(rebootServer){
+	
+	rebootServer = typeof rebootServer == 'boolean' ? rebootServer : true; //Set default
+
+	if(rebootServer){
+		util.log("Server: Starting...");
+ 
+		telnet.createServer(function (client) {
+		 
+		  // make unicode characters work properly 
+		  client.do.transmit_binary()
+		 
+		  // make the client emit 'window size' events 
+		  client.do.window_size()
+		 
+		  // listen for the window size events from the client 
+		  client.on('window size', function (e) {
+		    if (e.command === 'sb') {
+		      console.log('telnet window resized to %d x %d', e.width, e.height)
+		    }
+		  })
+		 
+		  // listen for the actual data from the client 
+		  client.on('data', function (b) {
+		  	//client.emit('command', telnet.COMMANDS.AO);
+		  	//client.emit('Abort Output');
+		  	//telnet.Command(COMMANDS.AO, client);
+		  	telnet.Command(245, client);
+		    client.write('You said: ' + b + '\n')
+		  })
+		 
+		  client.write('connected to Telnet server!\n')
+		 
+		}).listen(23)
+	}
 }
 
 /**
@@ -156,7 +190,7 @@ process.stdin.resume();
 //Gracefull Shutdown
 process.on( 'SIGINT', function() {
   console.log( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
-  serverCommands.shutdown()
+  serverCommandsMethods.shutdown()
   process.exit( );
 })
 
