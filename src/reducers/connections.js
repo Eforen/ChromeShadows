@@ -10,9 +10,6 @@ export default function connections(state = [], action) {
 			console.log("Connection #"+action.socket.ConnectionID+": Connected...")
 			//util.log(colorize.ansify("CON: New #red[NOT IMPLIMENTED]"));
 			return state
-		case 'CON_CONNECTED':
-			util.log(colorize.ansify("Players: Add #red[NOT IMPLIMENTED]"));
-			return state
 		case 'CON_INTERRUPT':
 			console.log("INTR!");
 			// disconnect on CTRL-C!
@@ -24,6 +21,12 @@ export default function connections(state = [], action) {
 		case 'CON_RESIZE':
 			util.log(colorize.ansify("#grey[CON "+action.id+": resized to "+action.width+"x"+action.height+"]"));
 			return state
+		case 'CON_STATE':
+			return state.map(con => id => 
+				id === action.id ?
+					Object.assign({}, con, {state: action.state}):
+					con
+			)
 		default:
 			return state
 	}
