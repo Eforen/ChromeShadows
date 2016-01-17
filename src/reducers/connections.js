@@ -7,6 +7,7 @@ export default function connections(state = [], action) {
 		case 'CON_NEW':
 			action.socket.ConnectionID = state.length;
 			state = [...state, {socket: action.socket, state: "intro"}]
+			console.log("Connection #"+action.socket.ConnectionID+": Connected...")
 			//util.log(colorize.ansify("CON: New #red[NOT IMPLIMENTED]"));
 			return state
 		case 'CON_CONNECTED':
@@ -19,6 +20,9 @@ export default function connections(state = [], action) {
 			return state
 		case 'CON_MSG':
 			util.log(colorize.ansify("CON "+action.id+": New msg #blue["+action.msg.slice(0, action.msg.length - 1)+"]"));
+			return state
+		case 'CON_RESIZE':
+			util.log(colorize.ansify("#grey[CON "+action.id+": resized to "+action.width+"x"+action.height+"]"));
 			return state
 		default:
 			return state

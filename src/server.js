@@ -26,6 +26,7 @@ import commander from 'commander'
 import localize from 'localize'
 import telnet from 'wez-telnet'
 import fs from 'fs'
+import colors from 'colors'
 import colorize from 'colorize'
 import clear from 'clear'
 
@@ -73,31 +74,21 @@ function init(rebootServer){
 		util.log("Server: Starting on port "+commander.port+"...");
  
  		var s = new telnet.Server(function (socket) {
+ 			//Place marker stoping sockets from being writen out in json
+ 			socket.doNotJson = true;
+
 			// I am the connection callback
 			
 
 
 			/*
 			// Register all of the events
-			for (var event in Events.events) {
-				socket.on(event, Events.events[event]);
-				util.log("Events: "+event+" loaded...");
-			}
-
-			socket.write("Connected... Hello World...\n\r"+
-						 "Talk to me!\n\r"+
-						 ">. ");
-			socket.on('data', function (buf) {
-				console.log("data:", buf.toString('ascii'));
-				socket.telnetCommand(253, [248]);
-				socket.write("You said " + buf + '\n\r'+
-							 '>. ');
-			});
-			socket.on('resize', function (width, height) {
-				console.log("resized to %dx%d", width, height);
-			});
 			*/
 
+			socket.on('resize', function (width, height) {
+				//console.log("resized to %dx%d", width, height);
+				getStore().dispatch(actionCOM.resize(socket.ConnectionID, width, height))
+			});
 			socket.on('data', function (buf) {
 				//console.log("Connection #"+socket.ConnectionID+": MSG...")
 				getStore().dispatch(actionCOM.newMsg(socket.ConnectionID, buf))
@@ -110,7 +101,6 @@ function init(rebootServer){
 			});
 
 			getStore().dispatch(actionCOM.newCom(socket))
-			console.log("Connection #"+socket.ConnectionID+": Connected...")
 
 			//socket.emit('login', socket);
 		});
@@ -151,6 +141,7 @@ function load(callback){
 }
 
 let serverCommandAlias = {
+	debugsave: 'debugSave',
 	saveall: 'saveAll',
 	loadall: 'hotswap',
 	hotswap: 'hotswap',
@@ -170,6 +161,44 @@ let serverCommandAlias = {
  * Commands that the server executable itself accepts in its CMD
  */
 let serverCommandMethods = {
+	/**
+	 * Preforms a debug save (Saves the entire state tree to the disk for inspection)
+	 */
+	debugSave : function (args)
+	{
+		try{
+			/*
+			var cache = [];
+			fs.writeFileSync("./data/debugState.json", 
+				JSON.stringify(getStore().getState(),function(key, value) {
+				    if (typeof value === 'object' && value !== null) {
+				        if (cache.indexOf(value) !== -1) {
+				            // Circular reference found, discard key
+				            return;
+				        }
+				        // Store value in our collection
+				        cache.push(value);
+				    }
+				    return value;
+				})
+			);
+			*/
+
+			fs.writeFileSync("./data/debugState.json", 
+				JSON.stringify(getStore().getState(),function(key, value) {
+				    if (key == "socket" && value.doNotJson) {
+				        return {id: value.ConnectionID}
+				    }
+				    return value;
+				})
+			);
+
+			util.log("Game State: State debug saved...".green)
+		} catch(err){
+			util.log(colors.red("Game State: Could not save state debug... "))
+			console.log(err)
+		}
+	},
 	/**
 	 * Save all server data including active players
 	 */

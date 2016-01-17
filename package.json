@@ -11,6 +11,7 @@
     "babel-register": "^6.4.3",
     "clear": "0.0.1",
     "colorize": "^0.1.0",
+    "colors": "^1.1.2",
     "commander": "^2.9.0",
     "js-yaml": "^3.5.2",
     "localize": "^0.4.7",

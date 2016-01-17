@@ -4,7 +4,8 @@ export const types = {
 	NEW : "CON_NEW",
 	INTERRUPT : "CON_INTERRUPT",
 	MSG : "CON_MSG",
-	CLOSE : "CON_CLOSE"
+	CLOSE : "CON_CLOSE",
+	RESIZE : "CON_RESIZE"
 }
 
 export function newCom(socket) {
@@ -20,6 +21,14 @@ export function interrupt(connectionID){
 	return {
 		type: types.INTERRUPT,
 		id: connectionID
+	}
+}
+export function resize(connectionID, width, height){
+	return {
+		type: types.RESIZE,
+		id: connectionID,
+		width: width,
+		height: height
 	}
 }
 
