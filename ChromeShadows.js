@@ -9,6 +9,7 @@ require('babel-register')({
     "presets": ["es2015"]
 });
 */
+require('babel-register');
 
 // load your app
 require("./src/server.js");

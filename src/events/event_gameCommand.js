@@ -1,0 +1,3 @@
+exports.gameCommand = function(player) {
+	
+}

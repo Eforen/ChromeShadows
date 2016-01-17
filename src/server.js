@@ -11,13 +11,28 @@
  */
 
 //General Library Imports
+/*
 var util = require('util'),
 	commander = require('commander'),
 	localize = require('localize'),
 	telnet = require('wez-telnet'),
 	fs = require('fs'),
 	colorize = require('colorize'),
-	clear = require('clear');
+	clear = require('clear'),
+	redux = require('redux');
+*/
+import util from 'util'
+import commander from 'commander'
+import localize from 'localize'
+import telnet from 'wez-telnet'
+import fs from 'fs'
+import colorize from 'colorize'
+import clear from 'clear'
+
+//Inner Libraries
+//var Events = require('./events.js')
+import {getStore} from './data';
+import * as actionCOM from './actions/connections'
 
 //Globals
 var packageObj = JSON.parse(fs.readFileSync('package.json', 'utf8'))
@@ -39,6 +54,8 @@ commander
 //rooms
 //items
 
+//Data Store
+
 //Data arrays
 var playerData = [],
 roomData = [],
@@ -53,17 +70,23 @@ function init(rebootServer){
 	rebootServer = typeof rebootServer == 'boolean' ? rebootServer : true; //Set default
 
 	if(rebootServer){
-		util.log("Server: Starting...");
+		util.log("Server: Starting on port "+commander.port+"...");
  
  		var s = new telnet.Server(function (socket) {
 			// I am the connection callback
-			console.log("connected term=%s %dx%d",
-			socket.term, socket.windowSize[0], socket.windowSize[1]);
+			
+
+
+			/*
+			// Register all of the events
+			for (var event in Events.events) {
+				socket.on(event, Events.events[event]);
+				util.log("Events: "+event+" loaded...");
+			}
 
 			socket.write("Connected... Hello World...\n\r"+
 						 "Talk to me!\n\r"+
 						 ">. ");
-
 			socket.on('data', function (buf) {
 				console.log("data:", buf.toString('ascii'));
 				socket.telnetCommand(253, [248]);
@@ -73,18 +96,37 @@ function init(rebootServer){
 			socket.on('resize', function (width, height) {
 				console.log("resized to %dx%d", width, height);
 			});
+			*/
+
+			socket.on('data', function (buf) {
+				//console.log("Connection #"+socket.ConnectionID+": MSG...")
+				getStore().dispatch(actionCOM.newMsg(socket.ConnectionID, buf))
+			});
 			socket.on('interrupt', function () {
-				console.log("INTR!");
-				// disconnect on CTRL-C!
-				socket.end();
+				getStore().dispatch(actionCOM.interrupt(socket.ConnectionID))
 			});
 			socket.on('close', function () {
-				console.log("END!");
+				getStore().dispatch(actionCOM.close(socket.ConnectionID))
 			});
-			
-			socket.emit('login', socket);
+
+			getStore().dispatch(actionCOM.newCom(socket))
+			console.log("Connection #"+socket.ConnectionID+": Connected...")
+
+			//socket.emit('login', socket);
 		});
-		s.listen(23);
+		s.listen(commander.port).on('error', function(err) {
+			if (err.code === 'EADDRINUSE') {
+				util.log("Cannot start server on port " + commander.port + ", address is already in use.");
+				util.log("Do you have a MUD server already running?");
+			} else if (err.code === 'EACCES') {
+				util.log("Cannot start server on port " + commander.port + ": permission denied.");
+				util.log("Are you trying to start it on a priviledged port without being root?");
+			} else {
+				util.log("Failed to start MUD server:");
+				util.log(err);
+			}
+			process.exit(1);
+		});
 	}
 }
 
@@ -108,7 +150,7 @@ function load(callback){
 	util.log("Data: Saving Done...");
 }
 
-serverCommandAlias = {
+let serverCommandAlias = {
 	saveall: 'saveAll',
 	loadall: 'hotswap',
 	hotswap: 'hotswap',
@@ -127,7 +169,7 @@ serverCommandAlias = {
 /**
  * Commands that the server executable itself accepts in its CMD
  */
-serverCommandMethods = {
+let serverCommandMethods = {
 	/**
 	 * Save all server data including active players
 	 */
