@@ -38,7 +38,7 @@ export function newMsg(connectionID, msg) {
 			con.socket.write(
 				colorize.ansify("" + 
 					(connectionID==index?"You say":(connectionID + " says")) +
-					": #blue["+msg.slice(0, msg.length - 1)+"]\n\r"
+					": #green["+msg.slice(0, msg.length - 1)+"]\n\r"
 				)
 			)
 		})
