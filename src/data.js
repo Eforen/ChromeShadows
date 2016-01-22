@@ -4,7 +4,7 @@ import thunk from 'redux-thunk';
 //import promise from 'redux-promise';
 //import createLogger from 'redux-logger'; //Not Compatable with serverside
 
-import reducers from './reducers/index'
+import reducers from './reducers'
 
 let data_folder = __dirname + '/../data/';
 
