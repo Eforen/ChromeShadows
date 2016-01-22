@@ -1,4 +1,6 @@
+import util from 'util'
 import colorize from "colorize"
+import {getID} from "../fetchers/connections";
 
 export const types = {
 	NEW : "CON_NEW",
@@ -22,12 +24,14 @@ export function newCom(socket) {
 }
 
 export function interrupt(connectionID){
+	connectionID = getID(connectionID)
 	return {
 		type: types.INTERRUPT,
 		id: connectionID
 	}
 }
 export function resize(connectionID, width, height){
+	connectionID = getID(connectionID)
 	return {
 		type: types.RESIZE,
 		id: connectionID,
@@ -37,6 +41,7 @@ export function resize(connectionID, width, height){
 }
 
 export function newMsg(connectionID, msg) {
+	connectionID = getID(connectionID)
 	return (dispatch, getState) =>  {
 		getState().connections.forEach((con, index) => {
 			con.socket.write(
@@ -56,6 +61,7 @@ export function newMsg(connectionID, msg) {
 }
 
 export function close(connectionID) {
+	connectionID = getID(connectionID)
 	console.log("END!");
 	return {
 		type: types.CLOSE,
@@ -68,15 +74,20 @@ export function close(connectionID) {
  ********************/
 
 export function changeMode(connectionID, newMode){
+	console.log("Socket2: "+connectionID)
+	//console.log(util.inspect(connectionID, {showHidden: false, depth: null}))
+	connectionID = getID(connectionID)
+	console.log(connectionID)
 	return {
-		types: type.MODE_CHANGE,
+		type: types.MODE_CHANGE,
 		id: connectionID,
 		mode: newMode
 	}
 }
 export function stateChange(connectionID, newState){
+	connectionID = getID(connectionID)
 	return {
-		types: type.STATE_CHANGE,
+		type: types.STATE_CHANGE,
 		id: connectionID,
 		state: newState
 	}
@@ -86,17 +97,24 @@ export function stateChange(connectionID, newState){
  ** Connection Var Handeling **
  ******************************/
 export function changeVar(connectionID, varName, value){
+	connectionID = getID(connectionID)
 	return {
-		types: type.VAR_CHANGE,
+		type: types.VAR_CHANGE,
 		id: connectionID,
 		name: varName,
 		value: value
 	}
 }
 export function clearVar(connectionID, varName){
+	connectionID = getID(connectionID)
 	return {
-		types: type.VAR_CLEAR,
+		type: types.VAR_CLEAR,
 		id: connectionID,
 		name: varName
 	}
+}
+
+export function send(connectionID, msg){
+	connectionID = getID(connectionID)
+
 }

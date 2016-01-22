@@ -34,7 +34,6 @@ import clear from 'clear'
 //var Events = require('./events.js')
 import {getStore} from './data';
 import {Commanders as Com} from "./commanders";
-import {modeCatcher} from "./modes";
 console.log(util.inspect(Com, {showHidden: false, depth: null}))
 //import * as actionCOM from './actions/connections'
 
@@ -106,7 +105,10 @@ function init(rebootServer){
 			});
 
 			getStore().dispatch(Com.Connections.newCom(socket))
-
+			console.log(util.inspect(socket, {showHidden: false, depth: null}))
+			//console.log("Socket: "+socket)
+			console.log("WTFMAN: "+socket.ConnectionID)
+			getStore().dispatch(Com.Connections.changeMode(socket.ConnectionID, "intro"))
 			//socket.emit('login', socket);
 		});
 		s.listen(commander.port).on('error', function(err) {
