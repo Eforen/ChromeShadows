@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "main": "ChromeShadows.js",
+  "engines" : { "node" : ">=5.4" },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

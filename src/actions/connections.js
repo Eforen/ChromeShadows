@@ -5,7 +5,11 @@ export const types = {
 	INTERRUPT : "CON_INTERRUPT",
 	MSG : "CON_MSG",
 	CLOSE : "CON_CLOSE",
-	RESIZE : "CON_RESIZE"
+	RESIZE : "CON_RESIZE",
+	MODE_CHANGE : "MODE_CHANGE",
+	STATE_CHANGE : "STATE_CHANGE",
+	VAR_CHANGE : "VAR_CHANGE",
+	VAR_CLEAR : "VAR_CLEAR"
 }
 
 export function newCom(socket) {
@@ -56,5 +60,43 @@ export function close(connectionID) {
 	return {
 		type: types.CLOSE,
 		id: connectionID,
+	}
+}
+
+/********************
+ ** Mode Handeling **
+ ********************/
+
+export function changeMode(connectionID, newMode){
+	return {
+		types: type.MODE_CHANGE,
+		id: connectionID,
+		mode: newMode
+	}
+}
+export function stateChange(connectionID, newState){
+	return {
+		types: type.STATE_CHANGE,
+		id: connectionID,
+		state: newState
+	}
+}
+
+/******************************
+ ** Connection Var Handeling **
+ ******************************/
+export function changeVar(connectionID, varName, value){
+	return {
+		types: type.VAR_CHANGE,
+		id: connectionID,
+		name: varName,
+		value: value
+	}
+}
+export function clearVar(connectionID, varName){
+	return {
+		types: type.VAR_CLEAR,
+		id: connectionID,
+		name: varName
 	}
 }

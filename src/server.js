@@ -33,7 +33,10 @@ import clear from 'clear'
 //Inner Libraries
 //var Events = require('./events.js')
 import {getStore} from './data';
-import * as actionCOM from './actions/connections'
+import {Commanders as Com} from "./commanders";
+import {modeCatcher} from "./modes";
+console.log(util.inspect(Com, {showHidden: false, depth: null}))
+//import * as actionCOM from './actions/connections'
 
 //Globals
 var packageObj = JSON.parse(fs.readFileSync('package.json', 'utf8'))
@@ -77,6 +80,8 @@ function init(rebootServer){
  			//Place marker stoping sockets from being writen out in json
  			socket.doNotJson = true;
 
+			//console.log(util.inspect(Com, {showHidden: false, depth: null}))
+
 			// I am the connection callback
 			
 
@@ -87,20 +92,20 @@ function init(rebootServer){
 
 			socket.on('resize', function (width, height) {
 				//console.log("resized to %dx%d", width, height);
-				getStore().dispatch(actionCOM.resize(socket.ConnectionID, width, height))
+				getStore().dispatch(Com.Connections.resize(socket.ConnectionID, width, height))
 			});
 			socket.on('data', function (buf) {
 				//console.log("Connection #"+socket.ConnectionID+": MSG...")
-				getStore().dispatch(actionCOM.newMsg(socket.ConnectionID, buf))
+				getStore().dispatch(Com.Connections.newMsg(socket.ConnectionID, buf))
 			});
 			socket.on('interrupt', function () {
-				getStore().dispatch(actionCOM.interrupt(socket.ConnectionID))
+				getStore().dispatch(Com.Connections.interrupt(socket.ConnectionID))
 			});
 			socket.on('close', function () {
-				getStore().dispatch(actionCOM.close(socket.ConnectionID))
+				getStore().dispatch(Com.Connections.close(socket.ConnectionID))
 			});
 
-			getStore().dispatch(actionCOM.newCom(socket))
+			getStore().dispatch(Com.Connections.newCom(socket))
 
 			//socket.emit('login', socket);
 		});

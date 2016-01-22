@@ -1,7 +1,7 @@
 var util = require('util'),
 	localize = require('localize'),
 	colorize = require('colorize');
-import { types as conType } from './connections'
+import { types as conType } from '../actions/connections'
 
 export default function players(state = [], action) {
 	switch (action.type) {
