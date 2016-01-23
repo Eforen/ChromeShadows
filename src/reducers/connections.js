@@ -32,7 +32,7 @@ export default function connections(state = [], action) {
 			util.log(util.inspect(action, {showHidden: false, depth: null}))
 			console.log("WTF123")
 			//util.log("index="+index+" action.id="+action.id)
-			return state.map(con => index => {
+			return state.map((con, index) => {
 				util.log("index="+index+" action.id="+action.id)
 				if(index == action.id){
 					util.log(util.inspect(con, {showHidden: false, depth: null}))
