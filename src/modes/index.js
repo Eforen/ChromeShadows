@@ -14,6 +14,7 @@ export function procModeChange(action, dispatch, getState) {
 
 	//TODO: Catch mode change and call Init after running the msg action
 	if(action.type == Com.Connections.types.MODE_CHANGE){
+		util.log("wtf0 "+Com.Connections.getMode(action.id) +" "+"State"+Com.Connections.getState(action.id))
 		if(modes[Com.Connections.getMode(action.id)]&&Com.Connections.getState(action.id)=="init")
 			modes[Com.Connections.getMode(action.id)].Init(action.id, getState, dispatch)
 	}
@@ -23,8 +24,10 @@ export function procMsg(action, dispatch, getState) {
 	
 	//TODO: Catch msg and pass into active mode
 	if(action.type == Com.Connections.types.MSG){
+		util.log("wtf1 "+Com.Connections.getMode(action.id) +" "+"State"+Com.Connections.getState(action.id))
 		if(modes[Com.Connections.getMode(action.id)]&&
 			modes[Com.Connections.getMode(action.id)]["State"+Com.Connections.getState(action.id)])
+			util.log("wtf2") &&
 			modes[Com.Connections.getMode(action.id)]["State"+Com.Connections.getState(action.id)](action.id, action.msg, getState, dispatch)
 	}
 }

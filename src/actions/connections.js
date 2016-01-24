@@ -81,11 +81,15 @@ export function changeMode(connectionID, newMode){
 }
 export function stateChange(connectionID, newState){
 	connectionID = getID(connectionID)
-	dispatch( {
+	let action = {
 		type: types.STATE_CHANGE,
 		id: connectionID,
 		state: newState
-	})
+	}
+	util.log("Msg:" + util.inspect(action, {showHidden: false, depth: null}))
+	//util.log(util.inspect(getState().connections[connectionID], {showHidden: false, depth: null}))
+	dispatch( action )
+	//util.log(util.inspect(getState().connections[connectionID], {showHidden: false, depth: null}))
 	return Promise.resolve()
 }
 

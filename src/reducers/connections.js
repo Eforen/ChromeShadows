@@ -26,7 +26,7 @@ export default function connections(state = [], action) {
 			util.log(colorize.ansify("#grey[CON "+action.id+": resized to "+action.width+"x"+action.height+"]"));
 			return state
 		case conType.CLOSE:
-			return action.filter(con => index => {
+			return action.filter((con, index) => {
 				if(index == action.id) return false;
 				return true;
 			})
@@ -43,13 +43,17 @@ export default function connections(state = [], action) {
 				return con
 			})
 		case conType.STATE_CHANGE:
-			return state.map(con => index => {
-				if(index == action.id)
+			return state.map((con, index) => {
+				if(index == action.id){
+					//console.log("CWTF1")
+					//util.log(util.inspect(Object.assign({}, con, {state:action.state}), {showHidden: false, depth: null}))
+					//console.log("CWTF2")
 					return Object.assign({}, con, {state:action.state})
-				return con
+				}
+				return con && console.log("CWTF3")
 			})
 		case conType.VAR_CHANGE:
-			return state.map(con => index => {
+			return state.map((con, index) => {
 				if(index == action.id)
 					return Object.assign({}, con, {vars: con.vars.map(v => name => {
 						if(name == action.name)
@@ -60,7 +64,7 @@ export default function connections(state = [], action) {
 				return con
 			})
 		case conType.VAR_CLEAR:
-			return state.map(con => index => {
+			return state.map((con, index) => {
 				if(index == action.id)
 					return Object.assign({}, con, {vars: con.vars.filter(v => index => {
 						if(index == action.name) return false;

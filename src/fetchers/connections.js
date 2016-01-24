@@ -12,7 +12,10 @@ export function getID(Con){
 
 export function getMode(Connection){
 	Connection = getID(Connection)
-	return state().connections[Connection]? state().connections[Connection].mode : "none"
+	if(state().connections[Connection]){
+		return state().connections[Connection].mode
+	}
+	return "none"
 }
 
 export function getState(Connection){
