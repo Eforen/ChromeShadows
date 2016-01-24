@@ -45,7 +45,7 @@ commander
 	.version('0.0.1') // todo: yank from package.json
 	.option('-s, --save [time]', 'Number of minutes between auto-save ticks [10]', 10)
 	.option('-r, --respawn [time]', 'Number of minutes between respawn tickets [20]', 20)
-	.option('-p, --port [portNumber]', 'Port to host telnet server [23]', 23)
+	.option('-p, --port [portNumber]', 'Port to host telnet server [4000]', 4000)
 	.option('-l, --locale [lang]', 'Default locale for the server', 'en')
 	.option('-v, --verbose', 'Verbose console logging.')
 	.parse(process.argv);
@@ -165,40 +165,6 @@ let serverCommandAlias = {
 	quit: 'shutdown',
 	help: 'help'
 }
-
-/*
- * Turn off echoing (specific to telnet client)
-void echo_off(struct descriptor_data *d)
-{
-  char off_string[] =
-    {
-      (char) IAC,
-      (char) WILL,
-      (char) TELOPT_ECHO,
-      (char) 0,
-    };
-
-  SEND_TO_Q(off_string, d);
-}
- */
-
-/*
- * Turn on echoing (specific to telnet client)
-void echo_on(struct descriptor_data *d)
-{
-  char on_string[] =
-    {
-      (char) IAC,
-      (char) WONT,
-      (char) TELOPT_ECHO,
-      (char) TELOPT_NAOFFD,
-      (char) TELOPT_NAOCRD,
-      (char) 0,
-    };
-
-  SEND_TO_Q(on_string, d);
-}
- */
 
 
 /**

@@ -1,3 +1,4 @@
+
 //Activate ES6
 /*
 require('babel-core/register')({

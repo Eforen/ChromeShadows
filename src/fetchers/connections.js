@@ -8,15 +8,19 @@ export function getID(Con){
 		return Con.ConnectionID
 	if(Con.socket && Con.socket.ConnectionID)
 		return Con.socket.ConnectionID
-	throw new error("Invalid Connection")
+	throw "Invalid Connection"
 }
 
 export function getMode(Connection){
 	Connection = getID(Connection)
 	if(state().connections[Connection]){
-		return state().connections[Connection].mode
+		if(state().connections[Connection].mode){
+			return state().connections[Connection].mode
+		}
+		throw "No mode found"
+		return
 	}
-	return "none"
+	throw "Could not find Connection"
 }
 
 export function getState(Connection){
@@ -26,5 +30,7 @@ export function getState(Connection){
 
 export function getSocket(Connection){
 	Connection = getID(Connection)
-	return state().connections[Connection]? state().connections[Connection].socket : null
+	if(state().connections[Connection])
+		return state().connections[Connection].socket
+	throw "Could not find Connection"
 }

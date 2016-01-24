@@ -4,20 +4,23 @@ import colorize from 'colorize'
 //import localHelper from 'strings';
 import { types as conType } from '../types/connections.js';
 
+var nextID = 0
 
 export default function connections(state = [], action) {
 	//console.log(conType)
 	switch (action.type) {
 		case conType.NEW:
-			action.socket.ConnectionID = state.length;
+			action.socket.ConnectionID = nextID;
+			nextID++
 			state = [...state, {id:action.socket.ConnectionID, socket: action.socket, mode:"none", state: "init", vars:{}}]
 			console.log("Connection #"+action.socket.ConnectionID+": Connected...")
 			//util.log(colorize.ansify("CON: New #red[NOT IMPLIMENTED]"));
 			return state
 		case conType.INTERRUPT:
-			console.log("INTR!");
+			console.log("INTR! on Connection #"+action.id);
 			// disconnect on CTRL-C!
-			if(state[action.id]) state[action.id].socket.end();
+			//if(state[action.id]) state[action.id].socket.write();
+			//if(state[action.id]) state[action.id].socket.end();
 			return state
 		case conType.MSG:
 			util.log(colorize.ansify("CON "+action.id+": New msg #green["+action.msg.slice(0, action.msg.length - 1)+"]"));
