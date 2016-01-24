@@ -1,6 +1,8 @@
 //Activate source mapping support
-import { install } from 'source-map-support';
-    install();
+require('source-map-support').install();
+
+//Activate nicer looking stack traces
+//require('cute-stack')();
 
 //Activate ES6
 require('babel-register');

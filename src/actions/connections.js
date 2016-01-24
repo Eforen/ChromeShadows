@@ -1,7 +1,7 @@
 'use strict';
 import util from 'util'
 import colorize from "colorize"
-import {getID} from "../fetchers/connections";
+import {getID, getSocket} from "../fetchers/connections";
 import {procMsg, procModeChange} from "../modes";
 import {dispatch, getState, getStore} from '../data';
 import {types} from '../types/connections';
@@ -119,7 +119,11 @@ export function newMsg(connectionID, msg) {
 	return dispatch( (dispatch, getState) =>  {
 		dispatch(action)
 		return Promise.resolve()
-	}).then(()=>{procMsg(action, dispatch, getState)})
+	}).then(()=>{
+		procMsg(action, dispatch, getState)
+	}).catch((e)=>{
+		setTimeout(()=>{throw e});
+	})
 }
 
 export function close(connectionID) {
@@ -152,7 +156,9 @@ export function changeMode(connectionID, newMode){
 		return Promise.resolve()
 	}).then(
 		()=>procModeChange(action, dispatch, getState)
-	)
+	).catch((e)=>{
+		setTimeout(()=>{throw e});
+	})
 }
 export function stateChange(connectionID, newState){
 	connectionID = getID(connectionID)
@@ -219,14 +225,9 @@ export function echoOff(connectionID) {
 	}
 	 */
 	console.log("efwtf")
-	throw new Error('Test!');
-	throw "OMG WTF"
-	console.stackTrace()
-	console.log(getStore())
-	console.log(getState())
-  	console.log("efwtf State: "+JSON.stringify(getStore().getState(), (k, v) => {if(k != "socket") return v}))
+  	//console.log("efwtf State: "+JSON.stringify(getStore().getState(), (k, v) => {if(k != "socket") return v}))
 	//Com.Connections.getSocket(connectionID).telnetCommand(telnetFlags.WILL, telnetFlags.OPT_ECHO)
-	getState().connections[connectionID].socket.telnetCommand(telnetFlags.WILL, telnetFlags.OPT_ECHO)
+	getSocket(connectionID).telnetCommand(telnetFlags.WILL, telnetFlags.OPT_ECHO)
 	console.log("efwtf2")
 }
 
@@ -249,7 +250,8 @@ export function echoOn(connectionID) {
 	  SEND_TO_Q(on_string, d);
 	}
 	 */
+	//console.trace("OMG WTF Trace")
 	console.log("enwtf")
-	Com.Connections.getSocket(connectionID).telnetCommand(telnetFlags.WONT, [telnetFlags.OPT_ECHO, telnetFlags.OPT_NAOFFD, telnetFlags.OPT_NAOCRD])
+	getSocket(connectionID).telnetCommand(telnetFlags.WONT, [telnetFlags.OPT_ECHO, telnetFlags.OPT_NAOFFD, telnetFlags.OPT_NAOCRD])
 	console.log("enwtf2")
 }
