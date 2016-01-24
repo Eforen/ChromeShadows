@@ -1,3 +1,4 @@
+'use strict';
 /**
  * To run the server:
  * node ChromeShadows [options]

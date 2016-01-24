@@ -1,3 +1,4 @@
+'use strict';
 import * as actions from "../actions/connections";
 import * as fetchers from "../fetchers/connections";
 import * as types from "../types/connections";

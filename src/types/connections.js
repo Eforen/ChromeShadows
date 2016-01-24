@@ -1,3 +1,4 @@
+'use strict';
 export const types = {
 	NEW : "CON_NEW",
 	INTERRUPT : "CON_INTERRUPT",

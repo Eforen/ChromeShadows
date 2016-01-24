@@ -1,3 +1,4 @@
+'use strict';
 import { registerMode } from './'
 import {Commanders as Com} from "../commanders";
 

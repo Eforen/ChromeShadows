@@ -1,3 +1,4 @@
+'use strict';
 import {getState as state} from '../data';
 
 export function getID(Con){

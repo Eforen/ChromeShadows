@@ -1,3 +1,4 @@
+'use strict';
 import util from 'util'
 import localize from 'localize'
 import colorize from 'colorize'

@@ -1,3 +1,4 @@
+'use strict';
 import fs from 'fs'
 import util from 'util'
 import { createStore, applyMiddleware } from 'redux'

@@ -1,3 +1,4 @@
+'use strict';
 import util from 'util'
 import colorize from "colorize"
 import {getID} from "../fetchers/connections";
@@ -218,7 +219,9 @@ export function echoOff(connectionID) {
 	}
 	 */
 	console.log("efwtf")
-	debuger;
+	throw new Error('Test!');
+	throw "OMG WTF"
+	console.stackTrace()
 	console.log(getStore())
 	console.log(getState())
   	console.log("efwtf State: "+JSON.stringify(getStore().getState(), (k, v) => {if(k != "socket") return v}))

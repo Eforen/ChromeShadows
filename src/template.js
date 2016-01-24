@@ -1,3 +1,4 @@
+'use strict';
 // Simple JavaScript Templating From
 // John Resig - http://ejohn.org/ - MIT Licensed
 var cache = {};

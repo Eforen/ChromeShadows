@@ -1,3 +1,4 @@
+'use strict';
 import Localize from 'localize'
 
 /**
