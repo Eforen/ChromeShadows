@@ -1,7 +1,8 @@
 # Known Bugs
 
 # Changes
-* Fixed bug:  Not Sending second msg to intro state thus not moving to login state.
+* Fixed bug: Not transitioning to login mode
+* Fixed bug: Not Sending second msg to intro state thus not moving to login state.
 * Connection State change action now works problem was in reducers
 * Got intro gamestate to init
 * Moved all action dispatching to the actions creation methods to allow for more complex actions.

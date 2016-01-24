@@ -10,20 +10,20 @@ import reducers from './reducers'
 
 let data_folder = __dirname + '/../data/';
 
-/*
 const loggerMiddleware = ({ dispatch, getState }) => {
   	return next => action =>{
-  		util.log("Dispatch: "+util.inspect(action, {showHidden: false, depth: null})+" State: "+util.inspect(getState(), {showHidden: false, depth: null}))
+  		util.log("Before State: "+JSON.stringify(getState(), (k, v) => {if(k != "socket") return v}))
+  		util.log("Dispatch: "+util.inspect(action, {showHidden: false, depth: null}))
 	  	let r = next(action)
-  		util.log("After State: "+util.inspect(getState(), {showHidden: false, depth: null}))
+  		util.log("After State: "+JSON.stringify(getState(), (k, v) => {if(k != "socket") return v}))
 	    return r
 	}
-}*/
+}
 
 //const logger = createLogger();
 const createStoreWithMiddleware = applyMiddleware(
 		thunk
-		//,loggerMiddleware
+		,loggerMiddleware
 	)(createStore);
 const store = createStoreWithMiddleware(reducers);
 //const store = createStore(reducers)

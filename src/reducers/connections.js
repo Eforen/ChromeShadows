@@ -31,13 +31,8 @@ export default function connections(state = [], action) {
 				return true;
 			})
 		case conType.MODE_CHANGE:
-			//util.log(util.inspect(action, {showHidden: false, depth: null}))
-			//console.log("WTF123")
-			//util.log("index="+index+" action.id="+action.id)
 			return state.map((con, index) => {
-				//util.log("index="+index+" action.id="+action.id)
 				if(index == action.id){
-					//util.log(util.inspect(con, {showHidden: false, depth: null}))
 					return Object.assign({}, con, {mode:action.mode, state:"init"})
 				}
 				return con
@@ -45,9 +40,6 @@ export default function connections(state = [], action) {
 		case conType.STATE_CHANGE:
 			return state.map((con, index) => {
 				if(index == action.id){
-					//console.log("CWTF1")
-					//util.log(util.inspect(Object.assign({}, con, {state:action.state}), {showHidden: false, depth: null}))
-					//console.log("CWTF2")
 					return Object.assign({}, con, {state:action.state})
 				}
 				return con && console.log("CWTF3")

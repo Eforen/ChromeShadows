@@ -10,6 +10,6 @@ registerMode({
     },
     StateContinue: function(con, msg) {
     	console.log("Intro: Sending connection #"+con+" to login")
-        dCom.Connections.changeMode(con, 'login')
+        Com.Connections.changeMode(con, 'login')
     }
 })

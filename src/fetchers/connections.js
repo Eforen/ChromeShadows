@@ -1,13 +1,14 @@
 import {getState as state} from '../data';
 
 export function getID(Con){
-	//console.log("WTF: "+Con)
+	console.log("WTF: "+Con)
 	if(typeof(Con)=="number")
 		return Con
 	if(typeof(Con.ConnectionID)=="function")
 		return Con.ConnectionID
 	if(Con.socket && Con.socket.ConnectionID)
 		return Con.socket.ConnectionID
+	throw new error("Invalid Connection")
 }
 
 export function getMode(Connection){
