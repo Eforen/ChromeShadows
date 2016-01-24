@@ -2,7 +2,7 @@
 import {getState as state} from '../data';
 
 export function getID(Con){
-	console.log("WTF: "+Con)
+	//console.log("WTF: "+Con)
 	if(typeof(Con)=="number")
 		return Con
 	if(typeof(Con.ConnectionID)=="function")

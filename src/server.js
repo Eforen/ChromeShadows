@@ -25,7 +25,7 @@ var util = require('util'),
 import util from 'util'
 import commander from 'commander'
 import localize from 'localize'
-import telnet from 'wez-telnet'
+import telnet from './telnet'
 import fs from 'fs'
 import colors from 'colors'
 import colorize from 'colorize'
@@ -103,6 +103,22 @@ function init(rebootServer){
 			});
 			socket.on('close', function () {
 				Com.Connections.close(socket.ConnectionID)
+			});
+			socket.on('do', function (opt) {
+              	//console.log("wtf2")
+              	console.log("opt == telnet.ECHO("+telnet.ECHO+") = "+(opt == telnet.ECHO))
+				if(opt == telnet.OPT_ECHO){
+             		//console.log("wtf3")
+					socket.telnetCommand(telnet.WILL, opt); //Assume that the server told it to not echo
+				} else{
+              		//console.log("wtf4")
+					socket.telnetCommand(telnet.WONT, opt);
+				}
+				return true
+			});
+			socket.on('dont', function (opt) {
+				socket.telnetCommand(telnet.WONT, opt);
+				return true
 			});
 
 			Com.Connections.newCom(socket)

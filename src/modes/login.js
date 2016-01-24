@@ -12,17 +12,18 @@ registerMode({
     },
     StateName: function(con, msg) {
         console.log("Login: Got Name from connection #"+con)
-        Com.Connections.send(con, "Slot me some credentials chummer! ")
         Com.Connections.echoOff(con)
-        Connections.stateChange(con, "Pass")
+        Com.Connections.send(con, "Slot me some credentials chummer! ")
+        Com.Connections.stateChange(con, "Pass")
         //If not invalid name
-        Com.Connections.changeVar(con, 'name', msg.trim())
+        Com.Connections.changeVar(con, 'name', msg.toString().trim())
     },
     StatePass: function(con, msg) {
         console.log("Login: Got Pass from connection #"+con)
         //if valid credentials 
         Com.Connections.echoOn(con)
-        Com.Connections.clearVar(con, 'name')
+        //Com.Connections.clearVar(con, 'name')
         Com.Connections.changeMode(con, 'mainmenu')
+        Com.Connections.echoOn(con)
     }
 })

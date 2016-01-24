@@ -110,6 +110,7 @@ export function resize(connectionID, width, height){
 }
 
 export function newMsg(connectionID, msg) {
+	console.log("MSG: New From #"+connectionID+" = "+util.inspect(msg, {showHidden: false, depth: null}))
 	connectionID = getID(connectionID)
 	let action = {
 		type: types.MSG,
@@ -224,11 +225,13 @@ export function echoOff(connectionID) {
 	  SEND_TO_Q(off_string, d);
 	}
 	 */
-	console.log("efwtf")
+	//console.log("efwtf")
   	//console.log("efwtf State: "+JSON.stringify(getStore().getState(), (k, v) => {if(k != "socket") return v}))
 	//Com.Connections.getSocket(connectionID).telnetCommand(telnetFlags.WILL, telnetFlags.OPT_ECHO)
+	console.log("DONT ECHO #"+connectionID)
 	getSocket(connectionID).telnetCommand(telnetFlags.WILL, telnetFlags.OPT_ECHO)
-	console.log("efwtf2")
+	//getSocket(connectionID).telnetCommand(telnetFlags.DONT, telnetFlags.OPT_ECHO)
+	//console.log("efwtf2")
 }
 
 export function echoOn(connectionID) {
@@ -251,7 +254,9 @@ export function echoOn(connectionID) {
 	}
 	 */
 	//console.trace("OMG WTF Trace")
-	console.log("enwtf")
+	//console.log("enwtf")
+	console.log("DO ECHO #"+connectionID)
 	getSocket(connectionID).telnetCommand(telnetFlags.WONT, [telnetFlags.OPT_ECHO, telnetFlags.OPT_NAOFFD, telnetFlags.OPT_NAOCRD])
-	console.log("enwtf2")
+	//getSocket(connectionID).telnetCommand(telnetFlags.DO, telnetFlags.OPT_ECHO)
+	//console.log("enwtf2")
 }

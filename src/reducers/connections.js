@@ -46,17 +46,15 @@ export default function connections(state = [], action) {
 				if(index == action.id){
 					return Object.assign({}, con, {state:action.state})
 				}
-				return con && console.log("CWTF3")
+				return con
 			})
 		case conType.VAR_CHANGE:
 			return state.map((con, index) => {
-				if(index == action.id)
-					return Object.assign({}, con, {vars: con.vars.map(v => name => {
-						if(name == action.name)
-							return action.value
-						return v
-					})
-				})
+				if(index == action.id){
+					let r = Object.assign({}, con)
+					r.vars[action.name] = action.value
+					return r
+				}
 				return con
 			})
 		case conType.VAR_CLEAR:
