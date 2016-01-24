@@ -3,11 +3,13 @@ import {Commanders as Com} from "../commanders";
 
 registerMode({
     ID: "intro",
-    Init: function(con, dispatch) {
-        Com.Connections.send(Con, "Welcome Press enter to Continue... ")
+    Init: function(con) {
+    	console.log("Intro: Sending init to connection #"+con)
+        Com.Connections.send(con, Array(50).join("\n")+"Welcome Press enter to Continue... ")
         Com.Connections.stateChange(con, "Continue")
     },
-    StateContinue: function(con, dispatch, msg) {
-        Com.Connections.changeMode(con, 'mainmenu')
+    StateContinue: function(con, msg) {
+    	console.log("Intro: Sending connection #"+con+" to login")
+        dCom.Connections.changeMode(con, 'login')
     }
 })

@@ -1,7 +1,7 @@
 var util = require('util'),
 	localize = require('localize'),
 	colorize = require('colorize');
-import { types as conType } from '../actions/connections'
+import { types as conType } from '../types/connections'
 
 export default function players(state = [], action) {
 	switch (action.type) {
@@ -14,7 +14,7 @@ export default function players(state = [], action) {
 		case 'PLAYER_LOGIN':
 			util.log(colorize.ansify("Players: Login #red[NOT IMPLIMENTED]"));
 			return state
-		case conType.close:
+		case conType.CLOSE:
 			//save and remove player from active player list
 			return state
 		default:

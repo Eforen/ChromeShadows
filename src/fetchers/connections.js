@@ -1,7 +1,7 @@
-import {getStore} from '../data';
+import {getState as state} from '../data';
 
 export function getID(Con){
-	console.log("WTF: "+Con)
+	//console.log("WTF: "+Con)
 	if(typeof(Con)=="number")
 		return Con
 	if(typeof(Con.ConnectionID)=="function")
@@ -12,15 +12,15 @@ export function getID(Con){
 
 export function getMode(Connection){
 	Connection = getID(Connection)
-	return getStore().getState().connections[Connection]?getStore().getState().connections[Connection].mode:"none"
+	return state().connections[Connection]? state().connections[Connection].mode : "none"
 }
 
 export function getState(Connection){
 	Connection = getID(Connection)
-	return getStore().getState().connections[Connection]?getStore().getState().connections[Connection].state:"init"
+	return state().connections[Connection]? state().connections[Connection].state : "init"
 }
 
 export function getSocket(Connection){
 	Connection = getID(Connection)
-	return getStore().getState().connections[Connection]?getStore().getState().connections[Connection].socket:null
+	return state().connections[Connection]? state().connections[Connection].socket : null
 }

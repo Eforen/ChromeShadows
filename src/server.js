@@ -32,7 +32,7 @@ import clear from 'clear'
 
 //Inner Libraries
 //var Events = require('./events.js')
-import {getStore} from './data';
+import {getState} from './data';
 import {Commanders as Com} from "./commanders";
 console.log(util.inspect(Com, {showHidden: false, depth: null}))
 //import * as actionCOM from './actions/connections'
@@ -91,24 +91,26 @@ function init(rebootServer){
 
 			socket.on('resize', function (width, height) {
 				//console.log("resized to %dx%d", width, height);
-				getStore().dispatch(Com.Connections.resize(socket.ConnectionID, width, height))
+				Com.Connections.resize(socket.ConnectionID, width, height)
 			});
 			socket.on('data', function (buf) {
 				//console.log("Connection #"+socket.ConnectionID+": MSG...")
-				getStore().dispatch(Com.Connections.newMsg(socket.ConnectionID, buf))
+				Com.Connections.newMsg(socket.ConnectionID, buf)
 			});
 			socket.on('interrupt', function () {
-				getStore().dispatch(Com.Connections.interrupt(socket.ConnectionID))
+				Com.Connections.interrupt(socket.ConnectionID)
 			});
 			socket.on('close', function () {
-				getStore().dispatch(Com.Connections.close(socket.ConnectionID))
+				Com.Connections.close(socket.ConnectionID)
 			});
 
-			getStore().dispatch(Com.Connections.newCom(socket))
-			console.log(util.inspect(socket, {showHidden: false, depth: null}))
+			Com.Connections.newCom(socket)
+			//console.log(util.inspect(getState(), {showHidden: false, depth: null}))
 			//console.log("Socket: "+socket)
-			console.log("WTFMAN: "+socket.ConnectionID)
-			getStore().dispatch(Com.Connections.changeMode(socket.ConnectionID, "intro"))
+			//console.log("WTFMAN: "+socket.ConnectionID)
+
+        	//Com.Connections.send(socket.ConnectionID, "Starting Connection... ")
+			Com.Connections.changeMode(socket.ConnectionID, "intro")
 			//socket.emit('login', socket);
 		});
 		s.listen(commander.port).on('error', function(err) {

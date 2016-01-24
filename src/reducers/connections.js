@@ -2,9 +2,11 @@ import util from 'util'
 import localize from 'localize'
 import colorize from 'colorize'
 //import localHelper from 'strings';
-import { types as conType } from '../actions/connections.js';
+import { types as conType } from '../types/connections.js';
+
 
 export default function connections(state = [], action) {
+	//console.log(conType)
 	switch (action.type) {
 		case conType.NEW:
 			action.socket.ConnectionID = state.length;
@@ -29,13 +31,13 @@ export default function connections(state = [], action) {
 				return true;
 			})
 		case conType.MODE_CHANGE:
-			util.log(util.inspect(action, {showHidden: false, depth: null}))
-			console.log("WTF123")
+			//util.log(util.inspect(action, {showHidden: false, depth: null}))
+			//console.log("WTF123")
 			//util.log("index="+index+" action.id="+action.id)
 			return state.map((con, index) => {
-				util.log("index="+index+" action.id="+action.id)
+				//util.log("index="+index+" action.id="+action.id)
 				if(index == action.id){
-					util.log(util.inspect(con, {showHidden: false, depth: null}))
+					//util.log(util.inspect(con, {showHidden: false, depth: null}))
 					return Object.assign({}, con, {mode:action.mode, state:"init"})
 				}
 				return con
