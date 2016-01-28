@@ -1,6 +1,8 @@
 # Known Bugs
 
 # Changes
+* Getting Testing for doing TDD setup
+* Started on the player handleing Code
 * Fixed bug: Username showing up under line not at the end of line.
 * Changed Connection id to incriment to avoid ID stacking
 * Changed default port from telnet default to 4000 which seems to be the default for MUDs

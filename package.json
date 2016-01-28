@@ -7,7 +7,7 @@
     "node": ">=5.4"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require ./ES6Hooks.js --reporter spec \"src/**/__tests__/*.test.js\""
   },
   "dependencies": {
     "babel-core": "^6.4.0",
@@ -35,6 +35,7 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "growl": "^1.8.1",
+    "immutable": "^3.7.6",
     "mocha": "^2.3.4"
   }
 }
