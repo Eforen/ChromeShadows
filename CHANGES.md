@@ -1,6 +1,7 @@
 # Known Bugs
 
 # Changes
+* Fixed bug: Username showing up under line not at the end of line.
 * Changed Connection id to incriment to avoid ID stacking
 * Changed default port from telnet default to 4000 which seems to be the default for MUDs
 * Fixed bug: Not transitioning to login mode

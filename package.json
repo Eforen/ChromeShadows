@@ -31,5 +31,10 @@
     "yaml": "^0.2.3"
   },
   "author": "Ariel Lothlorien",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "growl": "^1.8.1",
+    "mocha": "^2.3.4"
+  }
 }
