@@ -7,7 +7,15 @@ import { types as conType } from '../types/connections.js';
 
 var nextID = 0
 
-export default function connections(state = [], action) {
+export function setNextID(id) {
+	nextID = id
+}
+
+export function getNextID(id) {
+	return nextID
+}
+
+export function connections(state = [], action) {
 	//console.log(conType)
 	switch (action.type) {
 		case conType.NEW:

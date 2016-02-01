@@ -33,9 +33,11 @@
   "author": "Ariel Lothlorien",
   "license": "ISC",
   "devDependencies": {
+    "babel-plugin-rewire": "^1.0.0-beta-2",
     "chai": "^3.4.1",
     "growl": "^1.8.1",
     "immutable": "^3.7.6",
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "sinon": "^1.17.3"
   }
 }
