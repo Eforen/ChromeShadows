@@ -22,11 +22,11 @@ export function connections(state = [], action) {
 			action.socket.ConnectionID = nextID;
 			nextID++
 			state = [...state, {id:action.socket.ConnectionID, socket: action.socket, mode:"none", state: "init", vars:{}}]
-			console.log("Connection #"+action.socket.ConnectionID+": Connected...")
+			util.log("Connection #"+action.socket.ConnectionID+": Connected...")
 			//util.log(colorize.ansify("CON: New #red[NOT IMPLIMENTED]"));
 			return state
 		case conType.INTERRUPT:
-			console.log("INTR! on Connection #"+action.id);
+			util.log("Connection #"+action.id+": INTR!");
 			// disconnect on CTRL-C!
 			//if(state[action.id]) state[action.id].socket.write();
 			//if(state[action.id]) state[action.id].socket.end();
