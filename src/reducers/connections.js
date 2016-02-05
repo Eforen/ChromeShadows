@@ -2,6 +2,7 @@
 import util from 'util'
 import localize from 'localize'
 import colorize from 'colorize'
+import { List, Map } from 'immutable';
 //import localHelper from 'strings';
 import { types as conType } from '../types/connections.js';
 
@@ -15,13 +16,20 @@ export function getNextID(id) {
 	return nextID
 }
 
-export function connections(state = [], action) {
+export function connections(state = List.of(), action) {
 	//console.log(conType)
 	switch (action.type) {
 		case conType.NEW:
 			action.socket.ConnectionID = nextID;
 			nextID++
-			state = [...state, {id:action.socket.ConnectionID, socket: action.socket, mode:"none", state: "init", vars:{}}]
+			//state = [...state, {id:action.socket.ConnectionID, socket: action.socket, mode:"none", state: "init", vars:{}}]
+			state = state.set(action.socket.ConnectionID, Map({
+                id: action.socket.ConnectionID,
+                socket: action.socket, 
+                mode: "none", 
+                state: "init", 
+                vars: Map({})
+            }))
 			util.log("Connection #"+action.socket.ConnectionID+": Connected...")
 			//util.log(colorize.ansify("CON: New #red[NOT IMPLIMENTED]"));
 			return state
