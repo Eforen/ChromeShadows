@@ -9,7 +9,7 @@ import {types} from '../types/connections';
 import telnetFlags from '../telnetFlags'
 
 export function newCom(socket) {
-	console.log("attempting new connection term=%s %dx%d",
+	util.log("attempting new connection term=%s %dx%d",
 		socket.term, socket.windowSize[0], socket.windowSize[1]);
 	dispatch({
 		type: types.NEW,
@@ -38,7 +38,7 @@ export function resize(connectionID, width, height){
 }
 
 export function newMsg(connectionID, msg) {
-	console.log("MSG: New From #"+connectionID+" = "+util.inspect(msg, {showHidden: false, depth: null}))
+	util.log("MSG: New From #"+connectionID+" = "+util.inspect(msg, {showHidden: false, depth: null}))
 	connectionID = getID(connectionID)
 	let action = {
 		type: types.MSG,
@@ -57,7 +57,7 @@ export function newMsg(connectionID, msg) {
 
 export function close(connectionID) {
 	connectionID = getID(connectionID)
-	console.log("END!");
+	util.log("END!");
 	dispatch( {
 		type: types.CLOSE,
 		id: connectionID,

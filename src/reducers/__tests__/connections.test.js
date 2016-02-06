@@ -23,23 +23,18 @@ describe('Reducers > Connections', () => {
     let placeholder = {}
     beforeEach(()=>{
         //console.log("Testing this "+typeof(placeholder))
+        /*
         placeholder.testData = List.of(
             Map({
                 id: 0,
-                socket: {
-                    ConnectionID:0,
-                    write: sinon.stub()
-                }, 
+                socket: 0, 
                 mode:"none", 
                 state: "init", 
                 vars:Map({})
             }),
             Map({
                 id: 1,
-                socket: {
-                    ConnectionID:1,
-                    write: sinon.stub()
-                }, 
+                socket: 1, 
                 mode:"none", 
                 state: "init", 
                 vars:Map({})
@@ -47,90 +42,68 @@ describe('Reducers > Connections', () => {
         )
         placeholder.testData = placeholder.testData.set(3, Map({
             id: 3,
-            socket: {
-                ConnectionID:3,
-                write: sinon.stub()
-            }, 
+            socket: 2, 
             mode:"none", 
             state: "init", 
             vars:{}
         }))
         placeholder.testData = placeholder.testData.set(5, Map({
             id: 5,
-            socket: {
-                ConnectionID:5,
-                write: sinon.stub()
-            }, 
+            socket: 3, 
             mode:"none", 
             state: "init", 
             vars:{}
         }))
         placeholder.testData = placeholder.testData.set(6, Map({
             id: 6,
-            socket: {
-                ConnectionID:6,
-                write: sinon.stub()
-            }, 
+            socket: 4, 
             mode:"none", 
             state: "init", 
             vars:{}
         }))
+*/
+        placeholder.testData = List.of(
+            Map({
+                id: 0,
+                socket: 0, 
+                mode:"none", 
+                state: "init", 
+                vars:Map({})
+            }),
+            Map({
+                id: 1,
+                socket: 1, 
+                mode:"none", 
+                state: "init", 
+                vars:Map({})
+            }),
+            null,
+            Map({
+                id: 3,
+                socket: 2, 
+                mode:"none", 
+                state: "init", 
+                vars:Map({})
+            }),
+            null,
+            Map({
+                id: 5,
+                socket: 3, 
+                mode:"none", 
+                state: "init", 
+                vars:Map({testVar: "Test Value"})
+            }),
+            Map({
+                id: 6,
+                socket: 4, 
+                mode:"something", 
+                state: "somewhere", 
+                vars:Map({})
+            })
+        )
+        //console.log(placeholder.testData)
 
-        /*
-        placeholder.testData = [];
-        placeholder.testData[0] = {
-            id: 0,
-            socket: {
-                ConnectionID:0,
-                write: sinon.stub()
-            }, 
-            mode:"none", 
-            state: "init", 
-            vars:{}
-        }
-        placeholder.testData[1] = {
-            id: 1,
-            socket: {
-                ConnectionID:1,
-                write: sinon.stub()
-            }, 
-            mode:"none", 
-            state: "init", 
-            vars:{}
-        }
-        placeholder.testData[3] = {
-            id: 3,
-            socket: {
-                ConnectionID:3,
-                write: sinon.stub()
-            }, 
-            mode:"none", 
-            state: "init", 
-            vars:{}
-        }
-        placeholder.testData[5] = {
-            id: 5,
-            socket: {
-                ConnectionID:5,
-                write: sinon.stub()
-            }, 
-            mode:"none", 
-            state: "init", 
-            vars:{}
-        }
-        placeholder.testData[6] = {
-            id: 6,
-            socket: {
-                ConnectionID:6,
-                write: sinon.stub()
-            }, 
-            mode:"none", 
-            state: "init", 
-            vars:{}
-        }
-        */
-
-        Object.freeze(placeholder.testData)
+        //Object.freeze(placeholder.testData)
         //setNextID(7)
         ConnectionModuleRewireAPI.__Rewire__("nextID", 7)
         expect(getNextID()).to.equal(7)
@@ -140,24 +113,35 @@ describe('Reducers > Connections', () => {
         }
         //ConnectionModule.__set__("console", placeholder.console)
         ConnectionModuleRewireAPI.__Rewire__("util", placeholder.console)
+
+        placeholder.sockets = {
+            getNextSocketID: sinon.spy(),
+            getSocket: sinon.spy(),
+            getSocketCon: sinon.spy(),
+            addSocket: sinon.spy(),
+            setSocketConnection: sinon.spy()
+        }
+        ConnectionModuleRewireAPI.__Rewire__("Sockets", placeholder.sockets)
     })
     describe('connections', () => {
         it('Insure new adds a new connection correctly and counts correctly.', (done) => {
             const action = {
                 type: types.NEW,
-                socket: { marker:"Socket Mockup" }
+                socket: 4
             }
             const state = connections(placeholder.testData, action);
-            expect(state[7]).to.deep.equal({
+            expect(state.get(7)).to.equal(Map({
                 id: 7,
-                socket: { marker:"Socket Mockup", ConnectionID: 7 }, 
+                socket: 4, 
                 mode:"none", 
                 state: "init", 
-                vars:{}
-            })
+                vars:Map({})
+            }))
             //expect(placeholder.console.log.calledWith("Connection #7: Connected...")).to.be.true
             expect(placeholder.console.log.getCall(0).args[0]).to.equal("Connection #7: Connected...")
             expect(getNextID()).to.equal(8)
+            expect(placeholder.sockets.setSocketConnection.getCall(0).args[0]).to.equal(4)
+            expect(placeholder.sockets.setSocketConnection.getCall(0).args[1]).to.equal(7)
             done()
         })
         it('INTERRUPT', (done) => {
@@ -166,7 +150,7 @@ describe('Reducers > Connections', () => {
                 id: 3
             }
             const state = connections(placeholder.testData, action);
-            expect(state[3] == placeholder.testData[3]).to.be.true //Data Not Changed
+            expect(state.get(3) == placeholder.testData.get(3)).to.be.true //Data Not Changed
             expect(getNextID()).to.equal(7)
 
             //expect(placeholder.console.log.calledOnce).to.be.true
@@ -182,7 +166,7 @@ describe('Reducers > Connections', () => {
                 msg: "yolo!\n"
             }
             const state = connections(placeholder.testData, action);
-            expect(state[3] == placeholder.testData[3]).to.be.true //Data Not Changed
+            expect(state.get(3) == placeholder.testData.get(3)).to.be.true //Data Not Changed
             expect(placeholder.console.log.getCall(0).args[0]).to.equal(colorize.ansify("CON 3: New msg #green[yolo!]"))
             done()
         })
@@ -199,7 +183,7 @@ describe('Reducers > Connections', () => {
                 height: 823
             }
             const state = connections(placeholder.testData, action);
-            expect(state[6] == placeholder.testData[6]).to.be.true //Data Not Changed
+            expect(state.get(6) == placeholder.testData.get(6)).to.be.true //Data Not Changed
             expect(placeholder.console.log.getCall(0).args[0]).to.equal(colorize.ansify("#grey[CON 6: resized to 257x823]"))
             done()
         })
@@ -209,8 +193,16 @@ describe('Reducers > Connections', () => {
                 id: 6,
                 mode: "newMode"
             }
+            const state = connections(placeholder.testData, action);
+            expect(state.get(6)).to.equal(Map({
+                id: 6,
+                socket: 4, 
+                mode:"newMode", 
+                state: "init", 
+                vars:Map({})
+            }))
             //const state = connections(placeholder.testData, action);
-            //expect(state[6] == placeholder.testData[6]).to.be.true //Data Not Changed
+            //expect(state.get(6) == placeholder.testData.get(6)).to.be.true //Data Not Changed
             //expect(placeholder.console.log.getCall(0).args[0]).to.equal(colorize.ansify("#grey[CON 6: resized to 257x823]"))
             done()
         })
@@ -220,10 +212,18 @@ describe('Reducers > Connections', () => {
                 id: 6,
                 state: "newState"
             }
+            const state = connections(placeholder.testData, action);
+            expect(state.get(6)).to.equal(Map({
+                id: 6,
+                socket: 4, 
+                mode:"something", 
+                state: "newState", 
+                vars:Map({})
+            }))
             //const state = connections(placeholder.testData, action);
-            //expect(state[6] == placeholder.testData[6]).to.be.true //Data Not Changed
+            //expect(state.get(6) == placeholder.testData.get(6)).to.be.true //Data Not Changed
             //expect(placeholder.console.log.getCall(0).args[0]).to.equal(colorize.ansify("#grey[CON 6: resized to 257x823]"))
-            throw "Not Writen"
+            //throw "Not Writen"
             done()
         })
         it('VAR_CHANGE', (done) => {
@@ -233,22 +233,38 @@ describe('Reducers > Connections', () => {
                 name: "varName",
                 value: "value"
             }
+            const state = connections(placeholder.testData, action);
+            expect(state.get(6)).to.equal(Map({
+                id: 6,
+                socket: 4, 
+                mode:"something", 
+                state: "somewhere", 
+                vars:Map({varName: "value"})
+            }))
             //const state = connections(placeholder.testData, action);
-            //expect(state[6] == placeholder.testData[6]).to.be.true //Data Not Changed
+            //expect(state.get(6) == placeholder.testData.get(6)).to.be.true //Data Not Changed
             //expect(placeholder.console.log.getCall(0).args[0]).to.equal(colorize.ansify("#grey[CON 6: resized to 257x823]"))
-            throw "Not Writen"
+            //throw "Not Writen"
             done()
         })
         it('VAR_CLEAR', (done) => {
             const action = {
                 type: types.VAR_CLEAR,
-                id: 6,
-                name: "varName"
+                id: 5,
+                name: "testVar"
             }
+            const state = connections(placeholder.testData, action);
+            expect(state.get(5)).to.equal(Map({
+                id: 5,
+                socket: 3, 
+                mode:"none", 
+                state: "init", 
+                vars:Map({})
+            }))
             //const state = connections(placeholder.testData, action);
-            //expect(state[6] == placeholder.testData[6]).to.be.true //Data Not Changed
+            //expect(state.get(6) == placeholder.testData.get(6)).to.be.true //Data Not Changed
             //expect(placeholder.console.log.getCall(0).args[0]).to.equal(colorize.ansify("#grey[CON 6: resized to 257x823]"))
-            throw "Not Writen"
+            //throw "Not Writen"
             done()
         })
         /*

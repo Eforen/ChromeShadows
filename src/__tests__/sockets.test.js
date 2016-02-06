@@ -11,7 +11,14 @@ let expect = chai.expect;
 
 
 //import SocketsModule from '../sockets';
-import {getNextSocketID, getSocket, getSocketCon, addSocket, setSocketConnection, __RewireAPI__ as SocketsModuleRewireAPI} from '../sockets';
+import {
+	getNextSocketID,
+	getSocket,
+	getSocketCon,
+	addSocket, 
+	setSocketConnection, 
+	__RewireAPI__ as SocketsModuleRewireAPI
+} from '../sockets';
 import sinon from 'sinon'
 
 let placeholder = {}
@@ -33,7 +40,7 @@ describe('Core > Sockets', () => {
         placeholder.testConData[5] = -1
         placeholder.testConData[6] = 7
 
-		console.log(placeholder.testConData)
+		//console.log(placeholder.testConData)
         SocketsModuleRewireAPI.__Rewire__("socketConnection", placeholder.testConData)
 
         //setNextID(7)
@@ -58,7 +65,7 @@ describe('Core > Sockets', () => {
 		expect(addSocket("Test 7")).to.equal(7)
 		//expect(getSocket(7)).to.equal("Test 7")
 		//expect(getSocketCon(7)).to.equal(-1)
-		console.log(placeholder.testObjData)
+		//console.log(placeholder.testObjData)
 		expect(placeholder.testObjData[7]).to.equal("Test 7")
 		expect(placeholder.testConData[7]).to.equal(-1)
 
@@ -71,19 +78,19 @@ describe('Core > Sockets', () => {
     })
 	it('setSocketConnection', (done) => {
 		expect(setSocketConnection(3)).to.equal(4)
-		console.log(placeholder.testConData)
+		//console.log(placeholder.testConData)
 		//expect(getSocketCon(3)).to.equal(-1)
 		expect(placeholder.testConData[3]).to.equal(-1)
-		console.log(placeholder.testConData)
+		//console.log(placeholder.testConData)
 		expect(setSocketConnection(3, 8)).to.equal(-1)
 		//expect(getSocketCon(3)).to.equal(8)
 		expect(placeholder.testConData[3]).to.equal(8)
-		console.log(placeholder.testConData)
+		//console.log(placeholder.testConData)
 		expect(setSocketConnection(3)).to.equal(8)
 		//expect(getSocketCon(3)).to.equal(-1)
 		expect(placeholder.testConData[3]).to.equal(-1)
 
-		console.log(placeholder.testConData)
+		//console.log(placeholder.testConData)
 		//Test another number once to be safe
 		expect(setSocketConnection(6, 62)).to.equal(7)
 		expect(placeholder.testConData[6]).to.equal(62)

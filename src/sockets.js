@@ -20,7 +20,7 @@ export function addSocket(socket, ConID) {
 	//socketObj.insert(nextSocket, socket)
 	//socketConnection.insert(nextSocket, ConID)
 	let nextSocket = socketObj.length
-	console.log("|"+nextSocket+"|")
+	//console.log("|"+nextSocket+"|")
 	socketObj[nextSocket] = socket
 	socketConnection[nextSocket] = ConID
 	//nextSocket++
