@@ -10,9 +10,9 @@ chai.use(chaiImmutable);
 let expect = chai.expect;
 
 
-import ConnectionModule from '../connections';
-import {connections, setNextID, getNextID, __RewireAPI__ as ConnectionModuleRewireAPI} from '../connections';
-import {types} from '../../types/connections'
+import ConnectionModule from '../connections.reducers';
+import {connections, setNextID, getNextID, __RewireAPI__ as ConnectionModuleRewireAPI} from '../connections.reducers';
+import {types} from '../../types/connections.types'
 //import rewire from 'rewire'
 //let rewire = require("rewire");
 import sinon from 'sinon'

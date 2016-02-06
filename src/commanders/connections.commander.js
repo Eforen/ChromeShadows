@@ -1,7 +1,7 @@
 'use strict';
-import * as actions from "../actions/connections";
-import * as fetchers from "../fetchers/connections";
-import * as types from "../types/connections";
+import * as actions from "../actions/connections.actions";
+import * as fetchers from "../fetchers/connections.fetchers";
+import * as types from "../types/connections.types";
 
 import util from 'util'
 

@@ -8,7 +8,7 @@ chai.use(chaiImmutable);
 let expect = chai.expect;
 
 
-import ConnectionModule from '../connections';
+import ConnectionModule from '../connections.actions';
 //getSocket
 //dispatch
 import {

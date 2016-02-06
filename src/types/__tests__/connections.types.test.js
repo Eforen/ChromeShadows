@@ -1,6 +1,6 @@
 import {List, Map} from 'immutable';
 import {expect} from 'chai';
-import {types} from '../connections'
+import {types} from '../connections.types'
 //import {setEntries, next, vote} from '../src/core';
 
 describe('Types > Connections', () => {

@@ -17,7 +17,6 @@
     "colorize": "^0.1.0",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
-    "cute-stack": "^1.4.2",
     "js-yaml": "^3.5.2",
     "localize": "^0.4.7",
     "minimist": "^1.2.0",
