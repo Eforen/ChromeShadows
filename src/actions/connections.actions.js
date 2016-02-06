@@ -1,7 +1,7 @@
 'use strict';
 import util from 'util'
 import colorize from "colorize"
-import {getID, getSocket} from "../fetchers/connections.fetchers";
+import {getID, getSocket} from "../fetchers/connections.fetcher";
 import {procMsg, procModeChange} from "../modes";
 import {dispatch, getState, getStore} from '../data';
 import {types} from '../types/connections.types';
