@@ -69,8 +69,12 @@ describe('Actions > Connections', () => {
             term: "TestTerm",
             windowSize: [42, 69]
         }).then(()=>{
-            expect(placeholder.console.log.getCall(0).args[0]).to.equal("attempting new connection term=TestTerm 42x69")
-            expect(placeholder.dispatch.getCall(0).args[0]).to.equal({
+            //expect(placeholder.console.log.getCall(0).args[0]).to.equal("attempting new connection term=TestTerm 42x69")
+            expect(placeholder.console.log.getCall(0).args[0]).to.equal("attempting new connection term=%s %dx%d")
+            expect(placeholder.console.log.getCall(0).args[1]).to.equal("TestTerm")
+            expect(placeholder.console.log.getCall(0).args[2]).to.equal(42)
+            expect(placeholder.console.log.getCall(0).args[3]).to.equal(69)
+            expect(placeholder.dispatch.getCall(0).args[0]).to.deep.equal({
                 type: types.NEW,
                 socket: {
                     term: "TestTerm",
