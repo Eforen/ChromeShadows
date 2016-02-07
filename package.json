@@ -8,12 +8,15 @@
   },
   "scripts": {
     "start": "node ChromeShadows.js",
-    "test": "mocha --require ./ES6Hooks.js --reporter spec \"src/**/__tests__/*.test.js\""
+    "test": "mocha --require ./TestEnvSetup.js --reporter spec \"src/**/__tests__/*.test.js\" -R html-cov > coverage.html",
+    "test-cov": "mocha --require ./TestEnvSetup.js --reporter spec \"src/**/__tests__/*.test.js\" -R html-cov > coverage.html",
+    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --compilers js:babel-register \"src/**/__tests__/*.test.js\""
   },
   "dependencies": {
     "babel-core": "^6.4.0",
     "babel-preset-es2015": "^6.3.13",
     "babel-register": "^6.4.3",
+    "blanket": "^1.2.1",
     "clear": "0.0.1",
     "colorize": "^0.1.0",
     "colors": "^1.1.2",
@@ -39,6 +42,8 @@
     "chai-immutable": "^1.5.3",
     "growl": "^1.8.1",
     "immutable": "^3.7.6",
+    "isparta": "^4.0.0",
+    "istanbul": "^0.4.2",
     "mocha": "^2.3.4",
     "sinon": "^1.17.3"
   }
