@@ -96,7 +96,7 @@ describe('Fetchers > Connection', () => {
     	expect(getID(283)).to.equal(283)
     	expect(getID("8244")).to.equal(8244)
     	expect(getID("6745")).to.equal(6745)
-    	expect(getID(()=>{})).to.throw("Invalid Connection")
+    	expect(()=>getID(()=>{})).to.throw("Invalid Connection")
     	done()
     })
 
@@ -105,10 +105,10 @@ describe('Fetchers > Connection', () => {
     	expect(getMode(6)).to.equal("something")
     	expect(getMode("1")).to.equal("none")
     	expect(getMode("6")).to.equal("something")
-    	expect(getMode(5)).to.throw("No mode found")
-    	expect(getMode(-1)).to.throw("Could not find Connection")
-    	expect(getMode(7)).to.throw("Could not find Connection")
-    	expect(getMode(2)).to.throw("Could not find Connection")
+    	expect(()=>getMode(5)).to.throw("No mode found")
+    	expect(()=>getMode(-1)).to.throw("Could not find Connection")
+    	expect(()=>getMode(7)).to.throw("Could not find Connection")
+    	expect(()=>getMode(2)).to.throw("Could not find Connection")
     	done()
     })
 
