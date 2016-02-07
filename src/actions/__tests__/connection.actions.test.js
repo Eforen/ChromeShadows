@@ -11,7 +11,7 @@ import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 
 
-import ConnectionModule from '../connections.actions';
+import ConnectionModule from '../connection.actions';
 
 import * as telnetFlags from '../../telnetFlags'
 
@@ -31,8 +31,8 @@ import {
     echoOff,
     echoOn,
     __RewireAPI__ as ConnectionModuleRewireAPI
-} from '../connections.actions';
-import {types} from '../../types/connections.types'
+} from '../connection.actions';
+import {types} from '../../types/connection.types'
 import sinon from 'sinon'
 import colorize from 'colorize'
 

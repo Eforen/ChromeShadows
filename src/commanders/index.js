@@ -1,5 +1,5 @@
 'use strict';
-import {Connections} from "./connections.commander";
+import {Connections} from "./connection.commander";
 
 export var Commanders = {
 	Connections: Connections

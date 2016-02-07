@@ -4,7 +4,7 @@ import localize from 'localize'
 import colorize from 'colorize'
 import { List, Map } from 'immutable';
 //import localHelper from 'strings';
-import { types as conType } from '../types/connections.types.js';
+import { types as conType } from '../types/connection.types';
 import * as Sockets from "../sockets";
 
 var nextID = 0

@@ -2,8 +2,8 @@
 var util = require('util'),
 	localize = require('localize'),
 	colorize = require('colorize');
-import { types as pType } from '../types/players.types'
-import { types as cType } from '../types/connections.types'
+import { types as pType } from '../types/player.types'
+import { types as cType } from '../types/connection.types'
 
 export default function players(state = [], action) {
 	switch (action.type) {

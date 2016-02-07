@@ -2,10 +2,10 @@
 import util from 'util'
 import fs from 'fs'
 import colorize from "colorize"
-import {getPID} from "../fetchers/players.fetchers";
+import {getPID} from "../fetchers/player.fetchers";
 //import {procMsg, procModeChange} from "../modes";
 import {dispatch, getState, getStore} from '../data';
-import {types} from '../types/players.types';
+import {types} from '../types/player.types';
 
 export function savePlayer(player) {
 	let pid = getPID(player)
