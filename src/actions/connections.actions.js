@@ -38,7 +38,8 @@ export function resize(connectionID, width, height){
 }
 
 export function newMsg(connectionID, msg) {
-	util.log("MSG: New From #"+connectionID+" = "+util.inspect(msg, {showHidden: false, depth: null}))
+	//util.log("MSG: New From #"+connectionID+" = "+util.inspect(msg, {showHidden: false, depth: null}))
+	util.log("MSG: New From #%d: %s", connectionID, msg)
 	connectionID = getID(connectionID)
 	let action = {
 		type: types.MSG,
@@ -57,7 +58,7 @@ export function newMsg(connectionID, msg) {
 
 export function close(connectionID) {
 	connectionID = getID(connectionID)
-	util.log("END!");
+	util.log("END Con#%d!", connectionID);
 	dispatch( {
 		type: types.CLOSE,
 		id: connectionID,
