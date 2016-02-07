@@ -54,6 +54,11 @@ describe('Actions > Connections', () => {
         ConnectionModuleRewireAPI.__Rewire__("getID", placeholder.getID)
         ConnectionModuleRewireAPI.__Rewire__("getSocket", placeholder.getSocket)
 
+        placeholder.sockets = {
+            getSocket: sinon.stub()
+        }
+        ConnectionModuleRewireAPI.__Rewire__("sockets", placeholder.sockets)
+
 
         //placeholder.dispatch = sinon.stub()
         placeholder.getState = sinon.stub()
@@ -74,21 +79,21 @@ describe('Actions > Connections', () => {
         ConnectionModuleRewireAPI.__Rewire__("procModeChange", placeholder.procModeChange)
     })
     it('newCom', (done) => {
-        newCom({
+        placeholder.sockets.getSocket.returns({
             term: "TestTerm",
             windowSize: [42, 69]
-        }).then(()=>{
+        })
+        newCom(521).then(()=>{
             //expect(placeholder.console.log.getCall(0).args[0]).to.equal("attempting new connection term=TestTerm 42x69")
-            expect(placeholder.console.log.getCall(0).args[0]).to.equal("attempting new connection term=%s %dx%d")
-            expect(placeholder.console.log.getCall(0).args[1]).to.equal("TestTerm")
-            expect(placeholder.console.log.getCall(0).args[2]).to.equal(42)
-            expect(placeholder.console.log.getCall(0).args[3]).to.equal(69)
+            expect(placeholder.sockets.getSocket.calledWith(521))
+            expect(placeholder.console.log.getCall(0).args[0]).to.equal("Socket #%d: attempting new connection term=%s %dx%d")
+            expect(placeholder.console.log.getCall(0).args[1]).to.equal(521)
+            expect(placeholder.console.log.getCall(0).args[2]).to.equal("TestTerm")
+            expect(placeholder.console.log.getCall(0).args[3]).to.equal(42)
+            expect(placeholder.console.log.getCall(0).args[4]).to.equal(69)
             expect(placeholder.dispatch.getCall(0).args[0]).to.deep.equal({
                 type: types.NEW,
-                socket: {
-                    term: "TestTerm",
-                    windowSize: [42, 69]
-                }
+                socket: 521
             })
             done()
         }).catch((e)=>{

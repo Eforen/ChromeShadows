@@ -31,6 +31,15 @@ import colors from 'colors'
 import colorize from 'colorize'
 import clear from 'clear'
 
+
+import {
+	getNextSocketID,
+	getSocket, //(id)
+	getSocketCon, //(id)
+	addSocket, //(socket, ConID)
+	setSocketConnection, //(socketID, ConID)
+} from './sockets'
+
 //Inner Libraries
 //var Events = require('./events.js')
 import {getState} from './data';
@@ -92,17 +101,17 @@ function init(rebootServer){
 
 			socket.on('resize', function (width, height) {
 				//console.log("resized to %dx%d", width, height);
-				Com.Connections.resize(socket.ConnectionID, width, height)
+				Com.Connections.resize(getConIdFromSocket(socket), width, height)
 			});
 			socket.on('data', function (buf) {
 				//console.log("Connection #"+socket.ConnectionID+": MSG...")
-				Com.Connections.newMsg(socket.ConnectionID, buf)
+				Com.Connections.newMsg(getConIdFromSocket(socket), buf)
 			});
 			socket.on('interrupt', function () {
-				Com.Connections.interrupt(socket.ConnectionID)
+				Com.Connections.interrupt(getConIdFromSocket(socket))
 			});
 			socket.on('close', function () {
-				Com.Connections.close(socket.ConnectionID)
+				Com.Connections.close(getConIdFromSocket(socket))
 			});
 			socket.on('do', function (opt) {
               	//console.log("wtf2")
@@ -121,7 +130,7 @@ function init(rebootServer){
 				return true
 			});
 
-			Com.Connections.newCom(socket)
+			Com.Connections.newCom(addSocket(socket))
 			//console.log(util.inspect(getState(), {showHidden: false, depth: null}))
 			//console.log("Socket: "+socket)
 			//console.log("WTFMAN: "+socket.ConnectionID)

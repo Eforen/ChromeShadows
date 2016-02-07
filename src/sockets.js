@@ -14,6 +14,12 @@ export function getSocket(id) {
 export function getSocketCon(id) {
 	return socketConnection[id]
 }
+export function getConIdFromSocket(socket){
+	for (var i = socketObj.length - 1; i >= 0; i--) {
+		if(socketObj[i] == socket) return socketConnection[i]
+	}
+	return -1
+}
 
 export function addSocket(socket, ConID) {
 	if(typeof(ConID) == "undefined") ConID = -1

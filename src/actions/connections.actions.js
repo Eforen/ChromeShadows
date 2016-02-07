@@ -6,14 +6,16 @@ import {procMsg, procModeChange} from "../modes";
 import {dispatch, getState, getStore} from '../data';
 import {types} from '../types/connections.types';
 
+import * as sockets from '../sockets'
+
 import * as telnetFlags from '../telnetFlags'
 
-export function newCom(socket) {
-	util.log("attempting new connection term=%s %dx%d",
-		socket.term, socket.windowSize[0], socket.windowSize[1]);
+export function newCom(socketID) {
+	util.log("Socket #%d: attempting new connection term=%s %dx%d",
+		socketID, sockets.getSocket(socketID).term, sockets.getSocket(socketID).windowSize[0], sockets.getSocket(socketID).windowSize[1]);
 	dispatch({
 		type: types.NEW,
-		socket: socket
+		socket: socketID
 	})
 	return Promise.resolve()
 }

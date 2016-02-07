@@ -7,6 +7,7 @@
     "node": ">=5.4"
   },
   "scripts": {
+    "start": "node ChromeShadows.js",
     "test": "mocha --require ./ES6Hooks.js --reporter spec \"src/**/__tests__/*.test.js\""
   },
   "dependencies": {

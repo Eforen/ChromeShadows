@@ -15,6 +15,7 @@ import {
 	getNextSocketID,
 	getSocket,
 	getSocketCon,
+	getConIdFromSocket,
 	addSocket, 
 	setSocketConnection, 
 	__RewireAPI__ as SocketsModuleRewireAPI
@@ -59,6 +60,12 @@ describe('Core > Sockets', () => {
     })
 	it('getSocketCon', (done) => {
 		expect(getSocketCon(3)).to.equal(4)
+        done()
+    })
+	it('getConIdFromSocket', (done) => {
+		expect(getConIdFromSocket("Test Socket Data 1")).to.equal(-1)
+		expect(getConIdFromSocket("Test Socket Data 3")).to.equal(4)
+		expect(getConIdFromSocket("Test Socket Data 6")).to.equal(7)
         done()
     })
 	it('addSocket', (done) => {
