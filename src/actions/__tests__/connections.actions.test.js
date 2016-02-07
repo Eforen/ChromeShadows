@@ -12,6 +12,9 @@ chai.use(chaiAsPromised);
 
 
 import ConnectionModule from '../connections.actions';
+
+import * as telnetFlags from '../../telnetFlags'
+
 //getSocket
 //dispatch
 import {
@@ -53,11 +56,11 @@ describe('Actions > Connections', () => {
 
 
         //placeholder.dispatch = sinon.stub()
+        placeholder.getState = sinon.stub()
+        placeholder.getStore = sinon.stub()
         placeholder.dispatch = sinon.spy((obj)=>{
             if(typeof(obj)=="function") return obj(placeholder.dispatch, placeholder.getState)
         })
-        placeholder.getState = sinon.stub()
-        placeholder.getStore = sinon.stub()
 
         ConnectionModuleRewireAPI.__Rewire__("dispatch", placeholder.dispatch)
         ConnectionModuleRewireAPI.__Rewire__("getState", placeholder.getState)
@@ -170,71 +173,115 @@ describe('Actions > Connections', () => {
             setTimeout(()=>{throw e});
         })
     })
-    it('changeMode - Not Coded', (done) => {
-        /*
-        const action = {
-            type: types.STATE_CHANGE,
-            id: 6,
-            state: "newState"
-        }
-        const state = connections(placeholder.testData, action);
-        expect(state.get(6)).to.equal(Map({
-            id: 6,
-            socket: 4, 
-            mode:"something", 
-            state: "newState", 
-            vars:Map({})
-        }))
-        */
+    it('changeMode', (done) => {
+        placeholder.getID.returns(53)
+        changeMode(53, "somenewmode").then(()=>{
+            expect(placeholder.getID.getCall(0).args[0]).to.equal(53)
+            //placeholder.yield([arg1, arg2, ...])
+            let action = {
+                type: types.MODE_CHANGE,
+                id: 53,
+                mode: "somenewmode"
+            }
+            expect(placeholder.dispatch.getCall(1).args[0]).to.deep.equal(action)
+            expect(placeholder.procModeChange.getCall(0).args[0]).to.deep.equal(action)
+            expect(placeholder.procModeChange.getCall(0).args[1]).to.deep.equal(placeholder.dispatch)
+            expect(placeholder.procModeChange.getCall(0).args[2]).to.deep.equal(placeholder.getState)
+            done()
+        }).catch((e)=>{
+            setTimeout(()=>{throw e});
+        })
+    })
+    it('stateChange', (done) => {
+        placeholder.getID.returns(136)
+        stateChange(136, "somenewState").then(()=>{
+            expect(placeholder.getID.getCall(0).args[0]).to.equal(136)
+            expect(placeholder.dispatch.getCall(0).args[0]).to.deep.equal({
+                type: types.STATE_CHANGE,
+                id: 136,
+                state: "somenewState"
+            })
+            done()
+        }).catch((e)=>{
+            setTimeout(()=>{throw e});
+        })
+    })
+    it('changeVar', (done) => {
+        placeholder.getID.returns(621)
+        changeVar(621, "someVarName", "someVarValue").then(()=>{
+            expect(placeholder.getID.getCall(0).args[0]).to.equal(621)
+            
+            expect(placeholder.dispatch.getCall(0).args[0]).to.deep.equal({
+                type: types.VAR_CHANGE,
+                id: 621,
+                name: "someVarName",
+                value: "someVarValue"
+            })
+            done()
+        }).catch((e)=>{
+            setTimeout(()=>{throw e});
+        })
+    })
+    it('clearVar', (done) => {
+        placeholder.getID.returns(172)
+        clearVar(172, "someVarName").then(()=>{
+            expect(placeholder.getID.getCall(0).args[0]).to.equal(172)
+            
+            expect(placeholder.dispatch.getCall(0).args[0]).to.deep.equal({
+                type: types.VAR_CLEAR,
+                id: 172,
+                name: "someVarName"
+            })
+            done()
+        }).catch((e)=>{
+            setTimeout(()=>{throw e});
+        })
+    })
+    it('send', (done) => {
+        placeholder.getID.returns(7)
+        let write = sinon.spy()
+
+        placeholder.getState.returns({connections:[,,,,,,,{socket:{write:write}}]})
+        send(7, "Some Msg about something").then(()=>{
+            expect(placeholder.getID.getCall(0).args[0]).to.equal(7)
+
+            expect(write.calledWith("Some Msg about something")).to.be.true
+
+            done()
+        })
+    })
+    it('echoOff', (done) => {
+        //console.log(telnetFlags)
+
+        placeholder.getID.returns(182)
+        let telnetCommand = sinon.spy()
+        placeholder.getSocket.returns({telnetCommand: telnetCommand})
+        echoOff(182)
+
+        expect(placeholder.getID.getCall(0).args[0]).to.equal(182)
+
+        expect(placeholder.console.log.getCall(0).args[0]).to.equal("DONT ECHO #%d")
+        expect(placeholder.console.log.getCall(0).args[1]).to.equal(182)
+
+        expect(placeholder.getSocket.calledWith(182)).to.be.true
+        expect(telnetCommand.calledWith(telnetFlags.WILL, telnetFlags.OPT_ECHO)).to.be.true
+
         done()
     })
-    it('stateChange - Not Coded', (done) => {
-        /*
-        const action = {
-            type: types.VAR_CHANGE,
-            id: 6,
-            name: "varName",
-            value: "value"
-        }
-        const state = connections(placeholder.testData, action);
-        expect(state.get(6)).to.equal(Map({
-            id: 6,
-            socket: 4, 
-            mode:"something", 
-            state: "somewhere", 
-            vars:Map({varName: "value"})
-        }))
-        */
-        done()
-    })
-    it('changeVar - Not Coded', (done) => {
-        /*
-        const action = {
-            type: types.VAR_CLEAR,
-            id: 5,
-            name: "testVar"
-        }
-        const state = connections(placeholder.testData, action);
-        expect(state.get(5)).to.equal(Map({
-            id: 5,
-            socket: 3, 
-            mode:"none", 
-            state: "init", 
-            vars:Map({})
-        }))
-        */
-        done()
-    })
-    it('clearVar - Not Coded', (done) => {
-        done()
-    })
-    it('send - Not Coded', (done) => {
-        done()
-    })
-    it('echoOff - Not Coded', (done) => {
-        done()
-    })
-    it('echoOn - Not Coded', (done) => {
+    it('echoOn', (done) => {
+        placeholder.getID.returns(8410)
+        let telnetCommand = sinon.spy()
+        placeholder.getSocket.returns({telnetCommand: telnetCommand})
+        echoOn(8410)
+        
+        expect(placeholder.getID.getCall(0).args[0]).to.equal(8410)
+
+        expect(placeholder.console.log.getCall(0).args[0]).to.equal("DO ECHO #%d")
+        expect(placeholder.console.log.getCall(0).args[1]).to.equal(8410)
+
+        expect(placeholder.getSocket.calledWith(8410)).to.be.true
+        expect(telnetCommand.calledWith(telnetFlags.WONT, [telnetFlags.OPT_ECHO, telnetFlags.OPT_NAOFFD, telnetFlags.OPT_NAOCRD])).to.be.true
+
         done()
     })
 });

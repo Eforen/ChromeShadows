@@ -6,7 +6,7 @@ import {procMsg, procModeChange} from "../modes";
 import {dispatch, getState, getStore} from '../data';
 import {types} from '../types/connections.types';
 
-import telnetFlags from '../telnetFlags'
+import * as telnetFlags from '../telnetFlags'
 
 export function newCom(socket) {
 	util.log("attempting new connection term=%s %dx%d",
@@ -97,7 +97,7 @@ export function stateChange(connectionID, newState){
 		id: connectionID,
 		state: newState
 	}
-	util.log("Msg:" + util.inspect(action, {showHidden: false, depth: null}))
+	//util.log("Msg:" + util.inspect(action, {showHidden: false, depth: null}))
 	//util.log(util.inspect(getState().connections[connectionID], {showHidden: false, depth: null}))
 	dispatch( action )
 	//util.log(util.inspect(getState().connections[connectionID], {showHidden: false, depth: null}))
@@ -157,7 +157,7 @@ export function echoOff(connectionID) {
 	//console.log("efwtf")
   	//console.log("efwtf State: "+JSON.stringify(getStore().getState(), (k, v) => {if(k != "socket") return v}))
 	//Com.Connections.getSocket(connectionID).telnetCommand(telnetFlags.WILL, telnetFlags.OPT_ECHO)
-	console.log("DONT ECHO #"+connectionID)
+	util.log("DONT ECHO #%d", connectionID)
 	getSocket(connectionID).telnetCommand(telnetFlags.WILL, telnetFlags.OPT_ECHO)
 	//getSocket(connectionID).telnetCommand(telnetFlags.DONT, telnetFlags.OPT_ECHO)
 	//console.log("efwtf2")
@@ -184,7 +184,7 @@ export function echoOn(connectionID) {
 	 */
 	//console.trace("OMG WTF Trace")
 	//console.log("enwtf")
-	console.log("DO ECHO #"+connectionID)
+	util.log("DO ECHO #%d", connectionID)
 	getSocket(connectionID).telnetCommand(telnetFlags.WONT, [telnetFlags.OPT_ECHO, telnetFlags.OPT_NAOFFD, telnetFlags.OPT_NAOCRD])
 	//getSocket(connectionID).telnetCommand(telnetFlags.DO, telnetFlags.OPT_ECHO)
 	//console.log("enwtf2")
