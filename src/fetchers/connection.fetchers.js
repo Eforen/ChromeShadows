@@ -12,11 +12,19 @@ export function getID(Con){
 }
 
 export function getMode(connectionID){
-	console.log(data.getState().connections)
+	/*
+	data.getState().connections.forEach((v,k)=>{
+		console.log(k+": ")
+		console.log(v)
+	})
+	*/
+	//console.log(data.getState().connections)
+	//console.log(data.getState().connections.has(connectionID))
 	connectionID = getID(connectionID)
-	if(data.getState().connections.has(connectionID)){
-		if(data.getState().connections.hasIn(connectionID, "mode")){
-			return data.getState().connections.getIn(connectionID, mode)
+	//console.log(connectionID)
+	if(connectionID >= 0 && data.getState().connections.has(connectionID) && typeof(data.getState().connections.get(connectionID))!="undefined"){
+		if(data.getState().connections.get(connectionID).has("mode")){
+			return data.getState().connections.get(connectionID).get("mode")
 		}
 		throw new Error("No mode found")
 		return
@@ -24,14 +32,17 @@ export function getMode(connectionID){
 	throw new Error("Could not find Connection")
 }
 
-export function getState(Connection){
-	Connection = getID(Connection)
-	return data.getState().connections.has(Connection)? data.getState().connections.hasIn(Connection, "state") : "init"
+export function getState(connectionID){
+	connectionID = getID(connectionID)
+	return data.getState().connections.has(connectionID)
+		&&
+		typeof(data.getState().connections.get(connectionID))!="undefined"?
+			data.getState().connections.get(connectionID).get("state") : "init"
 }
 
 export function getSocket(Connection){
 	Connection = getID(Connection)
 	if(data.getState().connections.has(Connection))
-		return Sockets.getSocket(data.getState().getIn(Connection, "state"))
+		return Sockets.getSocket(data.getState().connections.get(Connection).get("socket"))
 	throw new Error("Could not find Connection")
 }

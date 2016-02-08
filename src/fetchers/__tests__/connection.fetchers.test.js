@@ -35,46 +35,45 @@ describe('Fetchers > Connection', () => {
         placeholder.testData = {
 	        getState: sinon.stub()
 		}
-		placeholder.testData.getState.returns({
-        	connections: List.of([
-	            Map({
-	                id: 0,
-	                socket: 0, 
-	                mode:"none", 
-	                state: "init", 
-	                vars:Map({})
-	            }),
-	            Map({
-	                id: 1,
-	                socket: 1, 
-	                mode:"none", 
-	                state: "init", 
-	                vars:Map({testVar1: "Test Value1"})
-	            }),
-	            null,
-	            Map({
-	                id: 3,
-	                socket: 2, 
-	                mode:"none", 
-	                state: "init", 
-	                vars:Map({testVar2: "Test Value2", testVar3: "Test Value3"})
-	            }),
-	            null,
-	            Map({
-	                id: 5,
-	                socket: 3, 
-	                vars:Map({testVar4: "Test Value4"})
-	            }),
-	            Map({
-	                id: 6,
-	                socket: 4, 
-	                mode:"something", 
-	                state: "somewhere", 
-	                vars:Map({})
-	            })]
-	        ),
-	        players: List.of()
-	    })
+        let data = {
+            connections: List.of(
+                Map({
+                    id: 0,
+                    socket: 0, 
+                    mode:"none", 
+                    state: "init", 
+                    vars:Map({})
+                }),
+                Map({
+                    id: 1,
+                    socket: 1, 
+                    mode:"none", 
+                    state: "init", 
+                    vars:Map({testVar1: "Test Value1"})
+                })
+            ),
+            players: List.of()
+        }
+        data.connections = data.connections.set(3, Map({
+            id: 3,
+            socket: 2, 
+            mode:"none", 
+            state: "init", 
+            vars:Map({testVar2: "Test Value2", testVar3: "Test Value3"})
+        }))
+        data.connections = data.connections.set(5, Map({
+            id: 5,
+            socket: 3, 
+            vars:Map({testVar4: "Test Value4"})
+        }))
+        data.connections = data.connections.set(6, Map({
+            id: 6,
+            socket: 4, 
+            mode:"something", 
+            state: "somewhere", 
+            vars:Map({})
+        }))
+		placeholder.testData.getState.returns(data)
         ConnectionModuleRewireAPI.__Rewire__("data", placeholder.testData)
 
         placeholder.console = {
@@ -123,11 +122,11 @@ describe('Fetchers > Connection', () => {
     })
 
     it('getSocket', (done) => {
-    	placeholder.sockets.withArgs(0).returns("s0")
-    	placeholder.sockets.withArgs(1).returns("s1")
-    	placeholder.sockets.withArgs(2).returns("s2")
-    	placeholder.sockets.withArgs(3).returns("s3")
-    	placeholder.sockets.withArgs(4).returns("s4")
+    	placeholder.sockets.getSocket.withArgs(0).returns("s0")
+    	placeholder.sockets.getSocket.withArgs(1).returns("s1")
+    	placeholder.sockets.getSocket.withArgs(2).returns("s2")
+    	placeholder.sockets.getSocket.withArgs(3).returns("s3")
+    	placeholder.sockets.getSocket.withArgs(4).returns("s4")
     	expect(getSocket(0)).to.equal("s0")
     	expect(getSocket(1)).to.equal("s1")
     	expect(getSocket(3)).to.equal("s2")
