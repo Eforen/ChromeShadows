@@ -18,9 +18,10 @@ export function getNextID(id) {
 }
 
 export function connections(state = List.of(), action) {
-	//console.log(conType)
+	//console.log("Con:"+ action.type)
 	switch (action.type) {
 		case conType.NEW:
+			console.log("Socket #%d: Will set con to %d", action.socket, nextID)
 			//action.socket.ConnectionID = nextID;
 			Sockets.setSocketConnection(action.socket, nextID)
 			//state = [...state, {id:action.socket.ConnectionID, socket: action.socket, mode:"none", state: "init", vars:{}}]

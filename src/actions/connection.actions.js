@@ -76,7 +76,7 @@ export function changeMode(connectionID, newMode){
 	//console.log("Socket2: "+connectionID)
 	//console.log(util.inspect(connectionID, {showHidden: false, depth: null}))
 	//connectionID = getID(connectionID)
-	//console.log(connectionID)
+	console.log(connectionID)
 	connectionID = getID(connectionID)
 	let action = {
 		type: types.MODE_CHANGE,
@@ -131,11 +131,12 @@ export function clearVar(connectionID, varName){
 
 export function send(connectionID, msg){
 	connectionID = getID(connectionID)
-	if(getState().connections && getState().connections[connectionID]){
-		getState().connections[connectionID].socket.write(msg)
+	try{
+		getSocket(connectionID).write(msg)
 		return Promise.resolve()
+	} catch(e){
+		return Promise.reject("No Socket Found")
 	}
-	return Promise.reject("No Socket Found")
 }
 
 export function echoOff(connectionID) {

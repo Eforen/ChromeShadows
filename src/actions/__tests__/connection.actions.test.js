@@ -54,8 +54,13 @@ describe('Actions > Connections', () => {
         ConnectionModuleRewireAPI.__Rewire__("getID", placeholder.getID)
         ConnectionModuleRewireAPI.__Rewire__("getSocket", placeholder.getSocket)
 
+        placeholder.socket = {
+            write: sinon.stub(),
+            telnetCommand: sinon.stub()
+        }
+
         placeholder.sockets = {
-            getSocket: sinon.stub()
+            getSocket: sinon.stub(),
         }
         ConnectionModuleRewireAPI.__Rewire__("sockets", placeholder.sockets)
 
@@ -244,13 +249,14 @@ describe('Actions > Connections', () => {
     })
     it('send', (done) => {
         placeholder.getID.returns(7)
-        let write = sinon.spy()
+        placeholder.getSocket.withArgs(7).returns(placeholder.socket)
 
-        placeholder.getState.returns({connections:[,,,,,,,{socket:{write:write}}]})
+        //placeholder.getState.returns({connections:[,,,,,,,{socket:32}]})
+        //placeholder.sockets.getSocket.withArgs(32).returns({write:write})
         send(7, "Some Msg about something").then(()=>{
             expect(placeholder.getID.getCall(0).args[0]).to.equal(7)
 
-            expect(write.calledWith("Some Msg about something")).to.be.true
+            expect(placeholder.socket.write.calledWith("Some Msg about something")).to.be.true
 
             done()
         })
@@ -259,8 +265,7 @@ describe('Actions > Connections', () => {
         //console.log(telnetFlags)
 
         placeholder.getID.returns(182)
-        let telnetCommand = sinon.spy()
-        placeholder.getSocket.returns({telnetCommand: telnetCommand})
+        placeholder.getSocket.withArgs(182).returns(placeholder.socket)
         echoOff(182)
 
         expect(placeholder.getID.getCall(0).args[0]).to.equal(182)
@@ -269,14 +274,13 @@ describe('Actions > Connections', () => {
         expect(placeholder.console.log.getCall(0).args[1]).to.equal(182)
 
         expect(placeholder.getSocket.calledWith(182)).to.be.true
-        expect(telnetCommand.calledWith(telnetFlags.WILL, telnetFlags.OPT_ECHO)).to.be.true
+        expect(placeholder.socket.telnetCommand.calledWith(telnetFlags.WILL, telnetFlags.OPT_ECHO)).to.be.true
 
         done()
     })
     it('echoOn', (done) => {
         placeholder.getID.returns(8410)
-        let telnetCommand = sinon.spy()
-        placeholder.getSocket.returns({telnetCommand: telnetCommand})
+        placeholder.getSocket.withArgs(8410).returns(placeholder.socket)
         echoOn(8410)
         
         expect(placeholder.getID.getCall(0).args[0]).to.equal(8410)
@@ -285,7 +289,7 @@ describe('Actions > Connections', () => {
         expect(placeholder.console.log.getCall(0).args[1]).to.equal(8410)
 
         expect(placeholder.getSocket.calledWith(8410)).to.be.true
-        expect(telnetCommand.calledWith(telnetFlags.WONT, [telnetFlags.OPT_ECHO, telnetFlags.OPT_NAOFFD, telnetFlags.OPT_NAOCRD])).to.be.true
+        expect(placeholder.socket.telnetCommand.calledWith(telnetFlags.WONT, [telnetFlags.OPT_ECHO, telnetFlags.OPT_NAOFFD, telnetFlags.OPT_NAOCRD])).to.be.true
 
         done()
     })

@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node ChromeShadows.js",
+    "debug": "node debug ChromeShadows.js",
     "test": "mocha --require ./TestEnvSetup.js --reporter spec \"src/**/__tests__/*.test.js\"",
     "test-cov": "mocha --require ./TestEnvSetup.js --reporter spec \"src/**/__tests__/*.test.js\" -R html-cov > coverage.html",
     "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --compilers js:babel-register \"src/**/__tests__/*.test.js\""
