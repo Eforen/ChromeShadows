@@ -17,6 +17,7 @@ import * as telnetFlags from '../../telnetFlags'
 
 //getSocket
 //dispatch
+import * as Con from '../connection.fetchers';
 import {
     getID,
     getMode,
@@ -93,32 +94,50 @@ describe('Fetchers > Connection', () => {
     })
 
     it('getID', (done) => {
-    	expect(getID(125)).to.equal(125)
-    	expect(getID(674)).to.equal(674)
-    	expect(getID(283)).to.equal(283)
-    	expect(getID("8244")).to.equal(8244)
-    	expect(getID("6745")).to.equal(6745)
-    	expect(()=>getID(()=>{})).to.throw("Invalid Connection")
+    	expect(Con.getID(125)).to.equal(125)
+    	expect(Con.getID(674)).to.equal(674)
+    	expect(Con.getID(283)).to.equal(283)
+    	expect(Con.getID("8244")).to.equal(8244)
+    	expect(Con.getID("6745")).to.equal(6745)
+    	expect(()=>Con.getID(()=>{})).to.throw("Invalid Connection")
     	done()
     })
 
     it('getMode', (done) => {
-    	expect(getMode(1)).to.equal("none")
-    	expect(getMode(6)).to.equal("something")
-    	expect(getMode("1")).to.equal("none")
-    	expect(getMode("6")).to.equal("something")
-    	expect(()=>getMode(5)).to.throw("No mode found")
-    	expect(()=>getMode(-1)).to.throw("Could not find Connection")
-    	expect(()=>getMode(7)).to.throw("Could not find Connection")
-    	expect(()=>getMode(2)).to.throw("Could not find Connection")
+    	expect(Con.getMode(1)).to.equal("none")
+    	expect(Con.getMode(6)).to.equal("something")
+    	expect(Con.getMode("1")).to.equal("none")
+    	expect(Con.getMode("6")).to.equal("something")
+    	expect(()=>Con.getMode(5)).to.throw("No mode found")
+    	expect(()=>Con.getMode(-1)).to.throw("Could not find Connection")
+    	expect(()=>Con.getMode(7)).to.throw("Could not find Connection")
+    	expect(()=>Con.getMode(2)).to.throw("Could not find Connection")
+    	done()
+    })
+
+    it('getModeState', (done) => {
+    	expect(Con.getModeState(1)).to.equal("init")
+    	expect(Con.getModeState(6)).to.equal("somewhere")
+    	expect(Con.getModeState(8)).to.equal("init")
     	done()
     })
 
     it('getState', (done) => {
-    	expect(getState(1)).to.equal("init")
-    	expect(getState(6)).to.equal("somewhere")
-    	expect(getState(8)).to.equal("init")
-    	done()
+        expect(getState(0)).to.equal(Map({
+            id: 0,
+            socket: 0, 
+            mode:"none", 
+            state: "init", 
+            vars:Map({})
+        }))
+        expect(getState(1)).to.equal(Map({
+            id: 1,
+            socket: 1, 
+            mode:"none", 
+            state: "init", 
+            vars:Map({testVar1: "Test Value1"})
+        }))
+        done()
     })
 
     it('getSocket', (done) => {
@@ -127,27 +146,29 @@ describe('Fetchers > Connection', () => {
     	placeholder.sockets.getSocket.withArgs(2).returns("s2")
     	placeholder.sockets.getSocket.withArgs(3).returns("s3")
     	placeholder.sockets.getSocket.withArgs(4).returns("s4")
-    	expect(getSocket(0)).to.equal("s0")
-    	expect(getSocket(1)).to.equal("s1")
-    	expect(getSocket(3)).to.equal("s2")
-    	expect(getSocket(5)).to.equal("s3")
-    	expect(getSocket(6)).to.equal("s4")
+    	expect(Con.getSocket(0)).to.equal("s0")
+    	expect(Con.getSocket(1)).to.equal("s1")
+    	expect(Con.getSocket(3)).to.equal("s2")
+    	expect(Con.getSocket(5)).to.equal("s3")
+    	expect(Con.getSocket(6)).to.equal("s4")
     	done()
     })
 
     it('getVar', (done) => {
-    	expect(getSocket(1, "testVar1")).to.equal("Test Value1")
-    	expect(getSocket(3, "testVar2")).to.equal("Test Value2")
-    	expect(getSocket(3, "testVar3")).to.equal("Test Value3")
-    	expect(getSocket(5, "testVar4")).to.equal("Test Value4")
+        expect(Con.getVar).to.be.a.function
+    	expect(Con.getVar(1, "testVar1")).to.equal("Test Value1")
+    	expect(Con.getVar(3, "testVar2")).to.equal("Test Value2")
+    	expect(Con.getVar(3, "testVar3")).to.equal("Test Value3")
+    	expect(Con.getVar(5, "testVar4")).to.equal("Test Value4")
     	done()
     })
 
     it('isVar', (done) => {
-    	expect(getSocket(1, "testVar1")).to.be.true
-    	expect(getSocket(3, "testVar2")).to.be.true
-    	expect(getSocket(3, "testVar3")).to.be.true
-    	expect(getSocket(5, "testVar4")).to.be.true
+        expect(Con.isVar).to.be.a.function
+    	expect(Con.isVar(1, "testVar1")).to.be.true
+    	expect(Con.isVar(3, "testVar2")).to.be.true
+    	expect(Con.isVar(3, "testVar3")).to.be.true
+    	expect(Con.isVar(5, "testVar4")).to.be.true
     	done()
     })
 })

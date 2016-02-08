@@ -23,8 +23,8 @@ export function getMode(connectionID){
 	connectionID = getID(connectionID)
 	//console.log(connectionID)
 	if(connectionID >= 0 && data.getState().connections.has(connectionID) && typeof(data.getState().connections.get(connectionID))!="undefined"){
-		if(data.getState().connections.get(connectionID).has("mode")){
-			return data.getState().connections.get(connectionID).get("mode")
+		if(data.getState().connections.hasIn([connectionID, "mode"])){
+			return data.getState().connections.getIn([connectionID, "mode"])
 		}
 		throw new Error("No mode found")
 		return
@@ -32,17 +32,37 @@ export function getMode(connectionID){
 	throw new Error("Could not find Connection")
 }
 
+export function getModeState(connectionID){
+	connectionID = getID(connectionID)
+	return (data.getState().connections.has(connectionID) &&
+		typeof(data.getState().connections.get(connectionID))!="undefined")?
+			data.getState().connections.getIn([connectionID, "state"]) : "init"
+}
+
 export function getState(connectionID){
 	connectionID = getID(connectionID)
-	return data.getState().connections.has(connectionID)
-		&&
-		typeof(data.getState().connections.get(connectionID))!="undefined"?
-			data.getState().connections.get(connectionID).get("state") : "init"
+	return (data.getState().connections.has(connectionID) &&
+		typeof(data.getState().connections.get(connectionID))!="undefined") ?
+			data.getState().connections.get(connectionID) : null
 }
 
 export function getSocket(Connection){
 	Connection = getID(Connection)
 	if(data.getState().connections.has(Connection))
-		return Sockets.getSocket(data.getState().connections.get(Connection).get("socket"))
+		return Sockets.getSocket(data.getState().connections.getIn([Connection, "socket"]))
 	throw new Error("Could not find Connection")
+}
+
+export function getVar(connectionID, name){
+	connectionID = getID(connectionID)
+	return (data.getState().connections.has(connectionID) && 
+		typeof(data.getState().connections.get(connectionID))!="undefined") ?
+			data.getState().connections.get(connectionID).getIn(["vars", name]) : null
+}
+
+export function isVar(connectionID, name){
+	connectionID = getID(connectionID)
+	return (data.getState().connections.has(connectionID) &&
+		typeof(data.getState().connections.get(connectionID))!="undefined") ?
+			data.getState().connections.get(connectionID).hasIn(["vars", name]) : false
 }

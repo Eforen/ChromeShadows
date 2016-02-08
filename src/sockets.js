@@ -34,7 +34,7 @@ export function addSocket(socket, ConID) {
 }
 
 export function setSocketConnection(socketID, ConID) {
-	console.log("Socket #%d: Setting con to %d", socketID, ConID)
+	//console.log("Socket #%d: Setting con to %d", socketID, ConID)
 	if(typeof(ConID) == "undefined") ConID = -1
 	if(socketConnection.length > socketID){
 		let oldID = socketConnection[socketID]

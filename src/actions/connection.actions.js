@@ -76,7 +76,7 @@ export function changeMode(connectionID, newMode){
 	//console.log("Socket2: "+connectionID)
 	//console.log(util.inspect(connectionID, {showHidden: false, depth: null}))
 	//connectionID = getID(connectionID)
-	console.log(connectionID)
+	//console.log(connectionID)
 	connectionID = getID(connectionID)
 	let action = {
 		type: types.MODE_CHANGE,
