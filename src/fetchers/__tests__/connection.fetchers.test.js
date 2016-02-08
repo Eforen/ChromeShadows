@@ -33,7 +33,10 @@ describe('Fetchers > Connection', () => {
 
     beforeEach(()=>{
         placeholder.testData = {
-        	connections: List.of(
+	        getState: sinon.stub()
+		}
+		placeholder.testData.getState.returns({
+        	connections: List.of([
 	            Map({
 	                id: 0,
 	                socket: 0, 
@@ -68,11 +71,11 @@ describe('Fetchers > Connection', () => {
 	                mode:"something", 
 	                state: "somewhere", 
 	                vars:Map({})
-	            })
+	            })]
 	        ),
 	        players: List.of()
-	    }
-        ConnectionModuleRewireAPI.__Rewire__("state", placeholder.testData)
+	    })
+        ConnectionModuleRewireAPI.__Rewire__("data", placeholder.testData)
 
         placeholder.console = {
             log: sinon.spy()
