@@ -6,8 +6,8 @@ import {Commanders as Com} from "../commanders";
 
 var modes = {}
 
-require('./intro')
-require('./login')
+//require('./intro')
+//require('./login')
 //console.log(modes)
 
 export function procModeChange(action, dispatch, getState) {
