@@ -14,13 +14,12 @@ import sinon from 'sinon'
 import colorize from 'colorize'
 
 //Import Code to be tested
-import login from '../login';
+import * as login from '../login';
 
 //Test the code
 
 describe('Modes > Login', () => {
     let placeholder = {}
-    let data = null
     beforeEach(()=>{
         placeholder.util = {
             log: sinon.stub()
@@ -41,31 +40,33 @@ describe('Modes > Login', () => {
                 loadPlayer: sinon.stub(),
                 isPlayerLoaded: sinon.stub(),
                 getPlayer: sinon.stub(),
+                exists: sinon.stub(),
+                validatePassword: sinon.stub(),
+                isReservedName:  sinon.stub()
             }
         }
         login.__Rewire__("Com", placeholder.Com)
 
-        login((obj) => {
-        	data = obj
-        })
+        login.Init = sinon.spy(login.Init)
 
-        expect(data).to.be.an.object
+        expect(login).to.be.an.object
     })
 
     it('Check the Mode ID', (done) => {
-        expect(data.ID).to.be.a.string
-        expect(data.ID).to.equal("login")
+        expect(login.ID).to.be.a.string
+        expect(login.ID).to.equal("login")
         done()
     })
 
     it('Check the Init', (done) => {
-        expect(data.Init).to.be.a.function
+        expect(login.Init).to.be.a.function
 
         let conNum = parseInt((Math.random() * 1000), 10)
 
-        data.Init(conNum)
+        login.Init(conNum)
 
         expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Sending init to client")
+        expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
 
         expect(placeholder.Com.Connections.echoOn.calledWith(conNum)).to.be.true
 
@@ -78,41 +79,57 @@ describe('Modes > Login', () => {
     })
 
     it('StateName > Valid Name', (done) => {
-        expect(data.StateName).to.be.a.function
+        //Setup
+        placeholder.Com.Players.isReservedName.false
+
+        //Test
+        expect(login.StateName).to.be.a.function
 
         let conNum = parseInt((Math.random() * 1000), 10)
 
-        data.StateName(conNum, 'name', " Tes23TeR12 ")
+        login.StateName(conNum, " Tes23TeR1 ")
         expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Name from client")
+        expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
 
         //Name Valid
+        expect(placeholder.Com.Players.isReservedName.getCall(0).args[0]).to.equal("tes23ter1")
+
         expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal("Slot me some credentials chummer! ")
 
         expect(placeholder.Com.Connections.changeVar.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.changeVar.getCall(0).args[1]).to.equal("name")
-        expect(placeholder.Com.Connections.changeVar.getCall(0).args[2]).to.equal("yoloman")
+        expect(placeholder.Com.Connections.changeVar.getCall(0).args[2]).to.equal("tes23ter1")
 
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Pass")
 
-        expect(placeholder.Com.Players.loadPlayer.called(With("tester"))).to.be.true
+        expect(placeholder.Com.Players.loadPlayer.calledWith("tes23ter1")).to.be.true
 
         done()
     })
 
-    it('StateName > Invalid Name (Reserved) --Not Implimented', (done) => {
-        expect(data.StateName).to.be.a.function
+    it('StateName > Invalid Name (Reserved)', (done) => {
+        //Setup
+        placeholder.Com.Players.isReservedName.true
+
+        //Test
+        expect(login.StateName).to.be.a.function
 
         let conNum = parseInt((Math.random() * 1000), 10)
 
-        data.StateName(conNum, 'name', " Admin ")
-        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Reserved Name from connection #conNum")
+        login.StateName(conNum, " Admin ")
+
+        expect(placeholder.Com.Players.isReservedName.getCall(0).args[0]).to.equal("admin")
+
+        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Reserved Name")
+        expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
 
         //Name Invalid
         expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal("That is a Reserved name and your\nstatistics do not match login rejected...\n\nAttempt Logged... \n")
 
+        /*
         expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Sending init to client #conNum")
 
         expect(placeholder.Com.Connections.echoOn.calledWith(conNum)).to.be.true
@@ -122,6 +139,8 @@ describe('Modes > Login', () => {
 
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Name")
+        */
+        expect(login.Init.calledWith(conNum)).to.be.true
 
         expect(placeholder.Com.Players.loadPlayer.called()).to.be.false
 
@@ -129,17 +148,25 @@ describe('Modes > Login', () => {
     })
 
     it('StateName > Invalid Name (Spaces)', (done) => {
-        expect(data.StateName).to.be.a.function
+        //Setup
+        placeholder.Com.Players.isReservedName.false
+
+        //Test
+        expect(login.StateName).to.be.a.function
 
         let conNum = parseInt((Math.random() * 1000), 10)
 
-        data.StateName(conNum, 'name', " Admin ")
-        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Reserved Name from connection #conNum")
+        login.StateName(conNum, " sffs eve ")
+        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Invalid Name (Spaces)")
+        expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
+        
+        expect(placeholder.Com.Players.isReservedName.getCall(0).args[0]).to.equal("sffs eve")
 
         //Name Invalid
         expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal("Spaces are not allowed in Username...\nTry again...\n")
 
+        /*
         expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Sending init to client #conNum")
 
         expect(placeholder.Com.Connections.echoOn.calledWith(conNum)).to.be.true
@@ -149,6 +176,8 @@ describe('Modes > Login', () => {
 
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Name")
+        */
+        expect(login.Init.calledWith(conNum)).to.be.true
 
         expect(placeholder.Com.Players.loadPlayer.called()).to.be.false
 
@@ -156,18 +185,25 @@ describe('Modes > Login', () => {
     })
 
     it('StateName > Invalid Name (Not Alphanumaric) {Tester Alpha!}', (done) => {
-        expect(data.StateName).to.be.a.function
+        //Setup
+        placeholder.Com.Players.isReservedName.false
+
+        //Test
+        expect(login.StateName).to.be.a.function
 
         let conNum = parseInt((Math.random() * 1000), 10)
 
-        data.StateName(conNum, 'name', " Admin ")
-        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Reserved Name from connection")
+        login.StateName(conNum, " yolo! ")
+        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Invalid Name (Not Alphanumaric)")
         expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
+
+        expect(placeholder.Com.Players.isReservedName.getCall(0).args[0]).to.equal("yolo!")
 
         //Name Invalid
         expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal("Please use only letters and numbers...\nTry again...\n")
 
+        /*
         expect(placeholder.util.log.getCall(1).args[0]).to.equal("Con %d: Login > Sending init to client")
         expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
 
@@ -178,6 +214,8 @@ describe('Modes > Login', () => {
 
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Name")
+        */
+        expect(login.Init.calledWith(conNum)).to.be.true
 
         expect(placeholder.Com.Players.loadPlayer.called()).to.be.false
 
@@ -185,18 +223,25 @@ describe('Modes > Login', () => {
     })
 
     it('StateName > Invalid Name (Too Short) {Tes}', (done) => {
-        expect(data.StateName).to.be.a.function
+        //Setup
+        placeholder.Com.Players.isReservedName.false
+
+        //Test
+        expect(login.StateName).to.be.a.function
 
         let conNum = parseInt((Math.random() * 1000), 10)
 
-        data.StateName(conNum, 'name', " Admin ")
+        login.StateName(conNum, " Ada ")
         expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Attempted Reserved Name")
         expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
+
+        expect(placeholder.Com.Players.isReservedName.getCall(0).args[0]).to.equal("ada")
 
         //Name Invalid
         expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal("Usernames must be more then 6 charecters...\nTry again...\n")
 
+        /*
         expect(placeholder.util.log.getCall(1).args[0]).to.equal("Con %d: Login > Sending init to connection")
         expect(placeholder.util.log.getCall(1).args[1]).to.equal(conNum)
 
@@ -207,6 +252,8 @@ describe('Modes > Login', () => {
 
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Name")
+         */
+        expect(login.Init.calledWith(conNum)).to.be.true
 
         expect(placeholder.Com.Players.loadPlayer.called()).to.be.false
 
@@ -220,11 +267,11 @@ describe('Modes > Login', () => {
         placeholder.Com.Players.validatePassword.returns(false)
         placeholder.Com.Players.validatePassword.callWith("tester", "foobar").returns(true)
 
-        expect(data.StatePass).to.be.a.function
+        expect(login.StatePass).to.be.a.function
 
         let conNum = parseInt((Math.random() * 1000), 10)
 
-        data.StatePass(conNum,"foobar")
+        login.StatePass(conNum,"foobar")
 
         expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Pass")
         expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
@@ -246,11 +293,11 @@ describe('Modes > Login', () => {
         placeholder.Com.Players.validatePassword.returns(false)
         placeholder.Com.Players.validatePassword.callWith("tester", "foobar").returns(true)
 
-        expect(data.StatePass).to.be.a.function
+        expect(login.StatePass).to.be.a.function
 
         let conNum = parseInt((Math.random() * 1000), 10)
 
-        data.StatePass(conNum,"foobarz")
+        login.StatePass(conNum,"foobarz")
 
         expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Pass from connection")
         expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
@@ -267,6 +314,8 @@ describe('Modes > Login', () => {
         expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal("Sorry that user already exists and thats not the password...\n")
 
+
+        /*
         expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Sending init to client #conNum")
 
         expect(placeholder.Com.Connections.echoOn.calledWith(conNum)).to.be.true
@@ -276,6 +325,8 @@ describe('Modes > Login', () => {
 
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Name")
+         */
+        expect(login.Init.calledWith(conNum)).to.be.true
 
         expect(placeholder.Com.Connections.changeMode.called()).to.be.false
         done()
@@ -288,11 +339,11 @@ describe('Modes > Login', () => {
         placeholder.Com.Players.validatePassword.returns(false)
         placeholder.Com.Players.validatePassword.callWith("tester", "foobar").returns(true)
 
-        expect(data.StatePass).to.be.a.function
+        expect(login.StatePass).to.be.a.function
 
         let conNum = parseInt((Math.random() * 1000), 10)
 
-        data.StatePass(conNum,"foobarz")
+        login.StatePass(conNum,"foobarz")
 
         expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Pass from connection")
         expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
@@ -309,6 +360,8 @@ describe('Modes > Login', () => {
         expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal("Sorry that user already exists and thats not the password...\n")
 
+
+        /*
         expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Sending init to client #conNum")
 
         expect(placeholder.Com.Connections.echoOn.calledWith(conNum)).to.be.true
@@ -318,6 +371,8 @@ describe('Modes > Login', () => {
 
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(conNum)
         expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Name")
+         */
+        expect(login.Init.calledWith(conNum)).to.be.true
 
         expect(placeholder.Com.Connections.changeMode.called()).to.be.false
         done()

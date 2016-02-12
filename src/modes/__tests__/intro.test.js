@@ -14,13 +14,12 @@ import sinon from 'sinon'
 import colorize from 'colorize'
 
 //Import Code to be tested
-import intro from '../intro';
+import * as intro from '../intro';
 
 //Test the code
 
 describe('Modes > Intro', () => {
     let placeholder = {}
-    let data = null
     beforeEach(()=>{
         placeholder.util = {
             log: sinon.stub()
@@ -36,23 +35,19 @@ describe('Modes > Intro', () => {
         }
         intro.__Rewire__("Com", placeholder.Com)
 
-        intro((obj) => {
-        	data = obj
-        })
-
-        expect(data).to.be.an.object
+        expect(intro).to.be.an.object
     })
 
     it('Check the Mode ID', (done) => {
-        expect(data.ID).to.be.a.string
-        expect(data.ID).to.equal("intro")
+        expect(intro.ID).to.be.a.string
+        expect(intro.ID).to.equal("intro")
         done()
     })
 
     it('Check the Init', (done) => {
-        expect(data.Init).to.be.a.function
+        expect(intro.Init).to.be.a.function
 
-        data.Init(25)
+        intro.Init(25)
 
         expect(placeholder.util.log.getCall(0).args[0]).to.equal("Intro: Sending init to connection #25")
 
@@ -65,9 +60,9 @@ describe('Modes > Intro', () => {
     })
 
     it('Check the StateContinue', (done) => {
-        expect(data.StateContinue).to.be.a.function
+        expect(intro.StateContinue).to.be.a.function
 
-        data.StateContinue(16,"/n")
+        intro.StateContinue(16,"/n")
 
         expect(placeholder.util.log.getCall(0).args[0]).to.equal("Intro: Sending connection #16 to login")
 
