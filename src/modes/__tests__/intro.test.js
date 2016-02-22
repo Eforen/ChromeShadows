@@ -47,27 +47,31 @@ describe('Modes > Intro', () => {
     it('Check the Init', (done) => {
         expect(intro.Init).to.be.a.function
 
-        intro.Init(25)
+        intro.StateInit(25).then(()=>{
+            expect(placeholder.util.log.getCall(0).args[0]).to.equal("Intro: Sending init to connection #25")
 
-        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Intro: Sending init to connection #25")
+            expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(25)
+            expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal(Array(50).join("\n")+"Welcome Press enter to Continue... ")
 
-        expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(25)
-        expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal(Array(50).join("\n")+"Welcome Press enter to Continue... ")
-
-        expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(25)
-        expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Continue")
-        done()
+            expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(25)
+            expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Continue")
+            done()
+        }).catch((e)=>{
+            setTimeout(()=>{throw e});
+        })
     })
 
     it('Check the StateContinue', (done) => {
         expect(intro.StateContinue).to.be.a.function
 
-        intro.StateContinue(16,"/n")
+        intro.StateContinue(16,"/n").then(()=>{
+            expect(placeholder.util.log.getCall(0).args[0]).to.equal("Intro: Sending connection #16 to login")
 
-        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Intro: Sending connection #16 to login")
-
-        expect(placeholder.Com.Connections.changeMode.getCall(0).args[0]).to.equal(16)
-        expect(placeholder.Com.Connections.changeMode.getCall(0).args[1]).to.equal("login")
-        done()
+            expect(placeholder.Com.Connections.changeMode.getCall(0).args[0]).to.equal(16)
+            expect(placeholder.Com.Connections.changeMode.getCall(0).args[1]).to.equal("login")
+            done()
+        }).catch((e)=>{
+            setTimeout(()=>{throw e});
+        })
     })
 })

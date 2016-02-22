@@ -3,6 +3,7 @@ import util from 'util'
 import { combineReducers } from 'redux'
 import colors from 'colors'
 import {Commanders as Com} from "../commanders";
+import {modes as allModes} from "./allModes";
 
 var modes = {}
 
@@ -17,11 +18,13 @@ export function procModeChange(action, dispatch, getState) {
 	if(action.type == Com.Connections.types.MODE_CHANGE){
 		//util.log("wtf0 "+Com.Connections.getMode(action.id) +" "+"State"+Com.Connections.getState(action.id))
 		if(modes[Com.Connections.getMode(action.id)]&&Com.Connections.getState(action.id)=="init")
-			modes[Com.Connections.getMode(action.id)].Init(action.id, getState, dispatch)
+			modes[Com.Connections.getMode(action.id)].StateInit(action.id, getState, dispatch)
 	}
 }
+
 export function procMsg(action, dispatch, getState) {
 	//util.log("Msg:" + util.inspect(action, {showHidden: false, depth: null}))
+	//util.log("Msg:" + util.inspect(modes, {showHidden: false, depth: null}))
 	
 	//TODO: Catch msg and pass into active mode
 	if(action.type == Com.Connections.types.MSG){
@@ -29,7 +32,7 @@ export function procMsg(action, dispatch, getState) {
 		if(modes[Com.Connections.getMode(action.id)]&&
 			modes[Com.Connections.getMode(action.id)]["State"+Com.Connections.getState(action.id)]){
 			//util.log("wtf2")
-			modes[Com.Connections.getMode(action.id)]["State"+Com.Connections.getState(action.id)](action.id, action.msg, getState, dispatch)
+				modes[Com.Connections.getMode(action.id)]["State"+Com.Connections.getState(action.id)](action.id, action.msg, getState, dispatch)
 		}
 	}
 }
@@ -41,3 +44,14 @@ export function registerMode(modeDescription) {
 	}
 	modes[modeDescription.ID] = modeDescription;
 }
+
+export function registerAllModes() {
+	if(modes.length === 0)
+		util.log("Modes: Reloading...")
+	for (var i = 0; i < allModes.length; i++) {
+		registerMode(allModes[i])
+	}
+	util.log("Modes: %d Loaded", allModes.length)
+}
+
+registerAllModes() //Auto Load first time
