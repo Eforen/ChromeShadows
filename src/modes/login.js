@@ -1,6 +1,7 @@
 'use strict';
 import util from "util"
-import {Commanders as Com} from "../commanders";
+import {Commanders as Com} from "../commanders"
+import validator from "validator"
 
 export var ID = "login"
 
@@ -43,11 +44,43 @@ export function StateName(con, msg) {
         }
     }
 }
+
 export function StatePass(con, msg) {
-    util.log("Login: Got Pass from connection #"+con)
-    //if valid credentials 
-    Com.Connections.echoOn(con)
-    //Com.Connections.clearVar(con, 'name')
-    Com.Connections.changeMode(con, 'mainmenu')
-    Com.Connections.echoOn(con)
+    let name = Com.Connections.getVar(con, 'name')
+    let pass = msg.toString()
+
+    return Com.Players.validate(name, pass).then(()=>{
+        util.log("Con %d: Login > Got Pass", con)
+        //if valid credentials 
+        //Com.Connections.clearVar(con, 'name')
+        Com.Connections.echoOn(con)
+        Com.Connections.changeMode(con, 'mainmenu')
+        //Com.Connections.echoOn(con)
+    }, (err)=>{
+        switch(err){
+            case 'password':
+                util.log("Con %d: Login > Entered the wrong Pass", con)
+                Com.Connections.send(con, "Sorry that user already exists and thats not the password...\n")
+                Init(con)
+                break
+            case "no user":
+                util.log("Con %d: Login > User does not exist offering creation...", con)
+                Com.Connections.send(con, name+" I don't know you, do you want to register [y/n]? ")
+                Init(con)
+                break
+            default:
+                util.log("Con %d: Login > Unknown Error", con)
+                Com.Connections.send(con, "Sorry could not log in as that user...\n")
+                Init(con)
+                break
+        }
+    })
+}
+
+export function StateNew(con, msg) {
+    //validator
+}
+
+export function StateRegister(con, msg) {
+    //validator
 }

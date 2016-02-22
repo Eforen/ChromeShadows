@@ -31,6 +31,7 @@ describe('Modes > Login', () => {
             Connections: {
                 echoOn: sinon.stub(),
                 echoOff: sinon.stub(),
+                getVar: sinon.stub(),
                 changeVar: sinon.stub(),
                 clearVar: sinon.stub(),
                 send: sinon.stub(),
@@ -42,7 +43,7 @@ describe('Modes > Login', () => {
                 isPlayerLoaded: sinon.stub(),
                 getPlayer: sinon.stub(),
                 exists: sinon.stub(),
-                validatePassword: sinon.stub(),
+                validate: sinon.stub(),
                 isReservedName:  sinon.stub()
             }
         }
@@ -265,119 +266,130 @@ describe('Modes > Login', () => {
 
     it('StatePass > Valid Pass', (done) => {
         //Setup
+        let conNum = parseInt((Math.random() * 1000), 10)
+
         placeholder.Com.Players.exists.returns(false)
-        placeholder.Com.Players.exists.callWith("tester").returns(true)
-        placeholder.Com.Players.validatePassword.returns(false)
-        placeholder.Com.Players.validatePassword.callWith("tester", "foobar").returns(true)
+        placeholder.Com.Players.exists.withArgs("tester").returns(true)
+        placeholder.Com.Players.validate.returns(Promise.resolve())
+        placeholder.Com.Connections.getVar.withArgs(conNum, "name").returns("tester")
+        //placeholder.Com.Players.validate.returns(false)
+        //placeholder.Com.Players.validate.withArgs("tester", "foobar").returns(true)
 
         expect(login.StatePass).to.be.a.function
 
-        let conNum = parseInt((Math.random() * 1000), 10)
 
-        login.StatePass(conNum,"foobar")
+        login.StatePass(conNum,"foobar").then(()=>{
+            expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Pass")
+            expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
 
-        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Pass")
-        expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
+            expect(placeholder.Com.Players.validate.getCall(0).args[0]).to.equal("tester")
+            expect(placeholder.Com.Players.validate.getCall(0).args[1]).to.equal("foobar")
 
-        expect(placeholder.Com.Players.validatePassword.getCall(0).args[0]).to.equal("tester")
-        expect(placeholder.Com.Players.validatePassword.getCall(0).args[1]).to.equal("foobar")
+            expect(placeholder.Com.Connections.echoOn.calledWith(conNum)).to.be.true
 
-        expect(placeholder.Com.Connections.echoOn.calledWith(conNum)).to.be.true
-
-        expect(placeholder.Com.Connections.changeMode.getCall(0).args[0]).to.equal(conNum)
-        expect(placeholder.Com.Connections.changeMode.getCall(0).args[1]).to.equal("mainmenu")
-        done()
+            expect(placeholder.Com.Connections.changeMode.getCall(0).args[0]).to.equal(conNum)
+            expect(placeholder.Com.Connections.changeMode.getCall(0).args[1]).to.equal("mainmenu")
+            done()
+        }).catch((e)=>{
+            setTimeout(()=>{throw e});
+        })
     })
 
     it('StatePass > Invalid Pass (User Exists)', (done) => {
         //Setup
+        let conNum = parseInt((Math.random() * 1000), 10)
+
         placeholder.Com.Players.exists.returns(false)
-        placeholder.Com.Players.exists.callWith("tester").returns(true)
-        placeholder.Com.Players.validatePassword.returns(false)
-        placeholder.Com.Players.validatePassword.callWith("tester", "foobar").returns(true)
+        placeholder.Com.Players.exists.withArgs("tester").returns(true)
+        //placeholder.Com.Players.validate.returns()
+        //placeholder.Com.Players.validate.returns(false)
+        placeholder.Com.Players.validate.returns(Promise.reject("password"))
+        placeholder.Com.Connections.getVar.withArgs(conNum, "name").returns("tester")
 
         expect(login.StatePass).to.be.a.function
 
-        let conNum = parseInt((Math.random() * 1000), 10)
 
-        login.StatePass(conNum,"foobarz")
+        login.StatePass(conNum,"foobarz").then(()=>{
+            expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Entered the wrong Pass")
+            expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
 
-        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Pass from connection")
-        expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
+            //expect(placeholder.Com.Players.exists.calledWith("tester")).to.be.true
 
+            expect(placeholder.Com.Players.validate.getCall(0).args[0]).to.equal("tester")
+            expect(placeholder.Com.Players.validate.getCall(0).args[1]).to.equal("foobarz")
 
-
-
-        expect(placeholder.Com.Players.exists.calledWith("tester")).to.be.true
-
-        expect(placeholder.Com.Players.validatePassword.getCall(0).args[0]).to.equal("tester")
-        expect(placeholder.Com.Players.validatePassword.getCall(0).args[1]).to.equal("foobarz")
-
-        //Rerun Init
-        expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(conNum)
-        expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal("Sorry that user already exists and thats not the password...\n")
+            //Rerun Init
+            expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(conNum)
+            expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal("Sorry that user already exists and thats not the password...\n")
 
 
-        /*
-        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Sending init to client #conNum")
+            /*
+            expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Sending init to client #conNum")
 
-        expect(placeholder.Com.Connections.echoOn.calledWith(conNum)).to.be.true
+            expect(placeholder.Com.Connections.echoOn.calledWith(conNum)).to.be.true
 
-        expect(placeholder.Com.Connections.send.getCall(1).args[0]).to.equal(conNum)
-        expect(placeholder.Com.Connections.send.getCall(1).args[1]).to.equal("What's your name? ")
+            expect(placeholder.Com.Connections.send.getCall(1).args[0]).to.equal(conNum)
+            expect(placeholder.Com.Connections.send.getCall(1).args[1]).to.equal("What's your name? ")
 
-        expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(conNum)
-        expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Name")
-         */
-        expect(login.Init.calledWith(conNum)).to.be.true
+            expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(conNum)
+            expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Name")
+             */
+            expect(login.Init.calledWith(conNum)).to.be.true
 
-        expect(placeholder.Com.Connections.changeMode.called()).to.be.false
-        done()
+            expect(placeholder.Com.Connections.changeMode.calledOnce).to.be.false
+            done()
+        }).catch((e)=>{
+            setTimeout(()=>{throw e});
+        })
     })
 
     it("StatePass > Invalid Pass (User Doesn't Exist)", (done) => {
         //Setup
+        let conNum = parseInt((Math.random() * 1000), 10)
         placeholder.Com.Players.exists.returns(false)
-        placeholder.Com.Players.exists.callWith("tester").returns(true)
-        placeholder.Com.Players.validatePassword.returns(false)
-        placeholder.Com.Players.validatePassword.callWith("tester", "foobar").returns(true)
+        placeholder.Com.Players.exists.withArgs("Tester").returns(true)
+        placeholder.Com.Players.validate.returns(Promise.reject("no user"))
+        placeholder.Com.Connections.getVar.withArgs(conNum, "name").returns("Tester")
+        //placeholder.Com.Players.validate.returns(false)
+        //placeholder.Com.Players.validate.withArgs("tester", "foobar").returns(true)
 
         expect(login.StatePass).to.be.a.function
 
-        let conNum = parseInt((Math.random() * 1000), 10)
 
-        login.StatePass(conNum,"foobarz")
-
-        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Got Pass from connection")
-        expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
+        login.StatePass(conNum,"foobarz").then(()=>{
+            expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > User does not exist offering creation...")
+            expect(placeholder.util.log.getCall(0).args[1]).to.equal(conNum)
 
 
 
 
-        expect(placeholder.Com.Players.exists.calledWith("tester")).to.be.true
+            //expect(placeholder.Com.Players.exists.calledWith("tester")).to.be.true
 
-        expect(placeholder.Com.Players.validatePassword.getCall(0).args[0]).to.equal("tester")
-        expect(placeholder.Com.Players.validatePassword.getCall(0).args[1]).to.equal("foobarz")
+            expect(placeholder.Com.Players.validate.getCall(0).args[0]).to.equal("Tester")
+            expect(placeholder.Com.Players.validate.getCall(0).args[1]).to.equal("foobarz")
 
-        //Rerun Init
-        expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(conNum)
-        expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal("Sorry that user already exists and thats not the password...\n")
+            //Rerun Init
+            expect(placeholder.Com.Connections.send.getCall(0).args[0]).to.equal(conNum)
+            expect(placeholder.Com.Connections.send.getCall(0).args[1]).to.equal("Tester I don't know you, do you want to register [y/n]? ")
 
 
-        /*
-        expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Sending init to client #conNum")
+            /*
+            expect(placeholder.util.log.getCall(0).args[0]).to.equal("Con %d: Login > Sending init to client #conNum")
 
-        expect(placeholder.Com.Connections.echoOn.calledWith(conNum)).to.be.true
+            expect(placeholder.Com.Connections.echoOn.calledWith(conNum)).to.be.true
 
-        expect(placeholder.Com.Connections.send.getCall(1).args[0]).to.equal(conNum)
-        expect(placeholder.Com.Connections.send.getCall(1).args[1]).to.equal("What's your name? ")
+            expect(placeholder.Com.Connections.send.getCall(1).args[0]).to.equal(conNum)
+            expect(placeholder.Com.Connections.send.getCall(1).args[1]).to.equal("What's your name? ")
 
-        expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(conNum)
-        expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Name")
-         */
-        expect(login.Init.calledWith(conNum)).to.be.true
+            expect(placeholder.Com.Connections.stateChange.getCall(0).args[0]).to.equal(conNum)
+            expect(placeholder.Com.Connections.stateChange.getCall(0).args[1]).to.equal("Name")
+             */
+            expect(login.Init.calledWith(conNum)).to.be.true
 
-        expect(placeholder.Com.Connections.changeMode.called()).to.be.false
-        done()
+            expect(placeholder.Com.Connections.changeMode.calledOnce).to.be.false
+            done()
+        }).catch((e)=>{
+            setTimeout(()=>{throw e});
+        })
     })
 })

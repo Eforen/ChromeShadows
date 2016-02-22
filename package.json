@@ -30,6 +30,7 @@
     "require-all": "^2.0.0",
     "source-map-support": "^0.4.0",
     "sty": "^0.6.1",
+    "validator": "^4.8.0",
     "wez-telnet": "^0.1.1",
     "yaml": "^0.2.3"
   },
